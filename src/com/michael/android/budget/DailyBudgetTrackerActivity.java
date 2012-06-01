@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -54,9 +55,15 @@ public class DailyBudgetTrackerActivity extends Activity {
 		}
 		@Override
 		public void onTick(long millisUntilFinished) {
+			
 			oRunningBudget = oRunningBudget - step;
+			double ratio = ((double)oRunningBudget)/mBudget;
 			if(oRunningBudget > mRunningBudget){
 				mBudgetGoal.setText(Integer.toString(oRunningBudget));
+				mBudgetGoal.setTextColor(getColor(ratio));
+			}
+			else{
+				onFinish();
 			}
 		}
 	}
@@ -174,11 +181,11 @@ public class DailyBudgetTrackerActivity extends Activity {
     	oRunningBudget = mRunningBudget; 
     	mRunningBudget = mRunningBudget	- value;
 		storeData();
-    	step = (oRunningBudget - mRunningBudget)/6;
+    	step = (oRunningBudget - mRunningBudget)/12;
     	if(step == 0){
     		step = 1;
     	}
-    	BudgetCounter counter = new BudgetCounter(600,100);
+    	BudgetCounter counter = new BudgetCounter(1200,60);
     	counter.start();
     }
     
@@ -234,7 +241,9 @@ public class DailyBudgetTrackerActivity extends Activity {
     
     /**Changes the Big Number to be what running budget currently is*/  
     private void updateRunningBudget(){
+    	double ratio = ((double)mRunningBudget)/mBudget;
     	mBudgetGoal.setText(Integer.toString(mRunningBudget));
+    	mBudgetGoal.setTextColor(getColor(ratio));
     	mInputBox.setText(null);
     	mFoodInputBox.setText(null);
     }
@@ -278,5 +287,43 @@ public class DailyBudgetTrackerActivity extends Activity {
     	findViewById(R.id.input_button).setClickable(true);
     	findViewById(R.id.m_history_button).setClickable(true);
     	findViewById(R.id.m_settings_button).setClickable(true);    	
-    }	
+    }
+    private int getColor(double ratio){
+    	int fColor = getResources().getColor(R.color.start);
+    	int red;
+    	int green;
+    	int blue;
+    	
+    	int fromColor;
+    	int toColor;
+    	
+    	if(ratio > 0.0){
+    		fromColor = getResources().getColor(R.color.start);
+    		toColor = getResources().getColor(R.color.good);
+    		red = (int)((double)(Color.red(fromColor)-Color.red(toColor))*ratio + Color.red(toColor));
+    		green = (int)((double)(Color.green(fromColor)-Color.green(toColor))*ratio + Color.green(toColor));
+    		blue = (int)((double)(Color.blue(fromColor)-Color.blue(toColor))*ratio + Color.blue(toColor));
+    		fColor = Color.rgb(red, green, blue);
+    	}
+    	else if(ratio > -0.2){
+    		fromColor = getResources().getColor(R.color.good);
+    		toColor = getResources().getColor(R.color.dangerous); 
+    		red = (int)(5*(double)(Color.red(fromColor)-Color.red(toColor))*ratio + Color.red(fromColor));
+    		green = (int)(5*(double)(Color.green(fromColor)-Color.green(toColor))*ratio + Color.green(fromColor));
+    		blue = (int)(5*(double)(Color.blue(fromColor)-Color.blue(toColor))*ratio + Color.blue(fromColor));
+    		fColor = Color.rgb(red, green, blue);
+    	}
+    	else if(ratio > -0.4){
+    		fromColor = getResources().getColor(R.color.dangerous);
+    		toColor = getResources().getColor(R.color.bad);  
+    		red = (int)(5*(double)(Color.red(fromColor)-Color.red(toColor))*ratio - Color.red(toColor) + 2*Color.red(fromColor));
+    		green = (int)(5*(double)(Color.green(fromColor)-Color.green(toColor))*ratio - Color.green(toColor) + 2*Color.green(fromColor));
+    		blue = (int)(5*(double)(Color.blue(fromColor)-Color.blue(toColor))*ratio - Color.blue(toColor) + 2*Color.blue(fromColor));
+    		fColor = Color.rgb(red, green, blue);
+    	}
+    	else{
+    		fColor = getResources().getColor(R.color.bad);
+    	}
+    	return fColor;
+    }
 }

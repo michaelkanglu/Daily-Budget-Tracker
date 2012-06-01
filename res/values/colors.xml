@@ -2,4 +2,8 @@
 <resources>
     <color name="lgray">#dcdcdc</color>
     <color name="dgray">#727272</color>
+    <color name="start">#BEBEBE</color>
+    <color name="good">#1AFF1A</color>
+    <color name="dangerous">#FFFF1A</color>
+    <color name="bad">#FF1A1A</color>
 </resources>
