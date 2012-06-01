@@ -19,10 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/edit_message">
-
-	    <requestFocus />
-	</EditText>
+        android:hint="@string/edit_message" />
 
 	<Spinner
 	    android:id="@+id/unit_select"
@@ -34,7 +31,10 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:ems="10" 
-	    android:hint="@string/food_edit_message"/>
+	    android:hint="@string/food_edit_message">
+
+	    <requestFocus />
+	</EditText>
 
 	<Button
 	    android:id="@+id/input_button"
