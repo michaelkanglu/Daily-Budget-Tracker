@@ -46,10 +46,6 @@ public class CalorieHistory extends Activity {
     	private static boolean rowColorFlag = true;  // True is light gray, false is dark gray.
     	
     	public FoodRow (Context context) {
-    		this(context, false);
-    	}
-    	
-    	public FoodRow (Context context, boolean text){
     		super(context);
     	}
     	
@@ -141,7 +137,7 @@ public class CalorieHistory extends Activity {
     }
 
 	public void createTitle (TableLayout tbl) {
-		// Create and add the main title to the table display..
+		// Create and add the main title to the table display.
     	
     	// Applying styles to the text.
         TextView title = new TextView(this);
