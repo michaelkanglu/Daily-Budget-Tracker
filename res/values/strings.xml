@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="def">-1</string>
+    <string name="app_name">DailyBudgetTracker</string>
+    <string name="edit_message">I just had&#8230;</string>
+    <string name="food_edit_message">from eating&#8230; \(optional\)</string>
+    
+	<string name="button_send">Submit</string>
+	<string name="button_cancel">Cancel</string>
+	
+	<string name="update_message">I\'ll set a budget of&#8230;</string>
+	<string name="button_update">Update</string>
+	<string name="s_budg_disp">Current budget: </string>
+	<string name="button_reset">Reset App</string>
+	
+	<string name="button_main">Main</string>
+	<string name="button_history">History</string>
+	<string name="button_settings">Settings</string>
+	<string name ="button_back">Back</string>
+	
+	<string name="title">Today you ate:</string>
+    <string name="row_edit">Edit</string>
+    <string name="row_delete">Delete</string>
+	
+    <string name="history_edit_food">Food</string>
+    <string name="history_edit_value">Calories</string>
+	
+	
+
+    <string-array name="unit_array">
+        <item>calories</item>
+        <item>g of sugar</item>
+        <item>g of fat</item>
+        <item>g of protein</item>
+    </string-array>
+</resources>

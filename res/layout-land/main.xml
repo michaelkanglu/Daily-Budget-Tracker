@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal" >
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:orientation="vertical" >
+
+
+    <TextView
+        android:id="@+id/budget_goal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/def"
+        android:gravity="center"
+        android:textSize="64sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight = "1"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/input_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/edit_message" />
+
+            <Spinner
+                android:id="@+id/unit_select"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/food_input_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/food_edit_message" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/m_main_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:onClick="openMain"
+                android:text="@string/button_main" />
+
+            <Button
+                android:id="@+id/m_history_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:onClick="openHistory"
+                android:text="@string/button_history" />
+
+            <Button
+                android:id="@+id/m_settings_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:onClick="openSettings"
+                android:text="@string/button_settings" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+	<Button
+	    android:id="@+id/input_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:onClick="inputValue"
+	    android:text="@string/button_send" />
+	</LinearLayout>
+    
+</LinearLayout>

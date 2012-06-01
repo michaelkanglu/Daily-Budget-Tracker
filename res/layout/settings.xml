@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal" >
+    
+		<EditText android:id="@+id/update_box" 
+        	android:layout_weight = "1"
+	    	android:layout_width="0dp" 
+	    	android:layout_height="wrap_content"
+	    	android:hint="@string/update_message"	/>
+	
+		<Button 
+        	android:id="@+id/update_button"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:text="@string/button_update"
+	    	android:onClick="newMasterBudget"	/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/s_budg_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/s_budg_disp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Button
+            android:id="@+id/reset_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:onClick="resetApp"
+            android:text="@string/button_reset" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:orientation = "horizontal" >
+
+
+		            <Button
+		                android:id="@+id/s_back_button"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_gravity="bottom"
+		                android:layout_weight="1"
+		                android:onClick="goBack"
+		                android:text="@string/button_back" />
+
+    </LinearLayout>
+</LinearLayout>
