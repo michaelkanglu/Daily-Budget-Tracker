@@ -365,4 +365,8 @@ public class CalorieHistory extends Activity {
 		//update the database
 		db_helper.updateTuple(rowID, food);
 		}
+	
+	public void goBack(View view) {
+		finish();
+	}
 }
