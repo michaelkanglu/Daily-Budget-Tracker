@@ -44,7 +44,6 @@ public class CalorieHistory extends Activity {
     private static class FoodRow extends TableRow{
     	private int myID;
     	private static boolean rowColorFlag = true;  // True is light gray, false is dark gray.
-    	private boolean isText;  // Normally, this is false for food entries. For text, this is true.
     	
     	public FoodRow (Context context) {
     		this(context, false);
@@ -52,7 +51,6 @@ public class CalorieHistory extends Activity {
     	
     	public FoodRow (Context context, boolean text){
     		super(context);
-    		isText = text;
     	}
     	
     	public void setID(int id){
@@ -66,10 +64,6 @@ public class CalorieHistory extends Activity {
     	public void setCorrectColor() {
     		// Sets the proper, alternating background color.
     		// Ignores text rows (headings).
-    		if (isText) {
-    			rowColorFlag = true;
-    			return;
-    		}
     		if (rowColorFlag) {
     			setBackgroundResource(R.color.lgray);
     		}
@@ -147,9 +141,7 @@ public class CalorieHistory extends Activity {
     }
 
 	public void createTitle (TableLayout tbl) {
-		// Create and add the main title to the table display.
-    	//FoodRow titleRow = new FoodRow(this, true);
-    	//titleRow.setGravity(Gravity.CENTER_HORIZONTAL); 
+		// Create and add the main title to the table display..
     	
     	// Applying styles to the text.
         TextView title = new TextView(this);
@@ -163,7 +155,6 @@ public class CalorieHistory extends Activity {
 	
 	public TextView createHeading (TableLayout tbl, String text) {
 		// Create a heading for the table display.
-		//FoodRow headRow = new FoodRow(this, true);
 		
 		// Applying styles to the text.
 		TextView head = new TextView(this);
@@ -171,7 +162,6 @@ public class CalorieHistory extends Activity {
 		head.setTextSize(28);
 		head.setTypeface(Typeface.DEFAULT_BOLD);
 		FoodRow.setFlag(true);
-		//headRow.addView(head);
 		return head;
 	}
 
@@ -231,6 +221,9 @@ public class CalorieHistory extends Activity {
 			if(tbl.getChildAt(i) instanceof FoodRow){
 				FoodRow tempRow = (FoodRow) tbl.getChildAt(i);
 				tempRow.setCorrectColor();
+			}
+			else {
+				FoodRow.setFlag(true);
 			}
 		}
 	}
@@ -376,9 +369,4 @@ public class CalorieHistory extends Activity {
 		//update the database
 		db_helper.updateTuple(rowID, food);
 		}
-	
-    public void goBack(View view) {
-    	finish();
-    }
-    
 }
