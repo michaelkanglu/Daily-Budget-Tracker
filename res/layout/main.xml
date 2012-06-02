@@ -57,7 +57,7 @@
 		        android:layout_weight="1"
 		        android:onClick="openMain"
 		        android:text="@string/button_main" />
-
+
 		        <Button
 		            android:id="@+id/m_history_button"
 		            android:layout_width="0dp"
@@ -66,7 +66,7 @@
 		            android:layout_weight="1"
 		            android:onClick="openHistory"
 		            android:text="@string/button_history" />
-
+
 		            <Button
 		                android:id="@+id/m_settings_button"
 		                android:layout_width="0dp"

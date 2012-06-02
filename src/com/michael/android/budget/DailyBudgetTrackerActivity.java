@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -31,6 +32,8 @@ public class DailyBudgetTrackerActivity extends Activity {
 		
 		int mBudget;
 		int mRunningBudget;
+		int oRunningBudget;
+		int step;
 		
 		int[] mUnitValues; //currently unused
 		
@@ -38,6 +41,25 @@ public class DailyBudgetTrackerActivity extends Activity {
 		int mDay;
 		int mMonth;
 		int mYear;
+		
+		//countdowntimer is an abstract class, so extend it and fill in methods
+	public class BudgetCounter extends CountDownTimer{
+		public BudgetCounter(long millisInFuture, long countDownInterval) {
+			super(millisInFuture, countDownInterval);
+		}
+		@Override
+		public void onFinish() {
+			updateRunningBudget();
+			unlockAllButtons();
+		}
+		@Override
+		public void onTick(long millisUntilFinished) {
+			oRunningBudget = oRunningBudget - step;
+			if(oRunningBudget > mRunningBudget){
+				mBudgetGoal.setText(Integer.toString(oRunningBudget));
+			}
+		}
+	}
 		
     /** Called when the activity is first created. */
     @Override
@@ -80,13 +102,7 @@ public class DailyBudgetTrackerActivity extends Activity {
     protected void onPause(){
        super.onPause();
        
-      SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-      SharedPreferences.Editor editor = settings.edit();
-      
-      editor.putInt(RUNNING_BUDGET, mRunningBudget);
-      editor.putInt(BUDGET, mBudget);
-      
-      editor.commit();
+      storeData();
     }  
     
     //saves most up to date information and the date app was last OPENED
@@ -107,8 +123,18 @@ public class DailyBudgetTrackerActivity extends Activity {
       editor.commit();
     }
     
+    private void storeData(){
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        
+        editor.putInt(RUNNING_BUDGET, mRunningBudget);
+        editor.putInt(BUDGET, mBudget);
+        editor.commit();
+    }
+    
     /*reads food information user inputs and updates database and budget appropriately**/
     public void inputValue(View view){
+    	lockAllButtons();
     	String v_input = mInputBox.getText().toString();
     	String f_input = mFoodInputBox.getText().toString();
     	int value = 0;
@@ -125,6 +151,7 @@ public class DailyBudgetTrackerActivity extends Activity {
     		Toast toast = Toast.makeText(context, text, duration);
     		toast.show();
     		mInputBox.setText(null);
+    		unlockAllButtons();
     		return;
     	}
     	
@@ -135,6 +162,7 @@ public class DailyBudgetTrackerActivity extends Activity {
     		Toast toast = Toast.makeText(context, text, duration);
     		toast.show();
     		mInputBox.setText(null);
+    		unlockAllButtons();
     		return;
     	}
     	
@@ -143,8 +171,15 @@ public class DailyBudgetTrackerActivity extends Activity {
     	
     	addFoodToDatabase(f_input,value);
     	
-    	mRunningBudget = mRunningBudget - value;
-    	updateRunningBudget();
+    	oRunningBudget = mRunningBudget; 
+    	mRunningBudget = mRunningBudget	- value;
+		storeData();
+    	step = (oRunningBudget - mRunningBudget)/6;
+    	if(step == 0){
+    		step = 1;
+    	}
+    	BudgetCounter counter = new BudgetCounter(600,100);
+    	counter.start();
     }
     
     public void openSettings(View view) {
@@ -226,4 +261,22 @@ public class DailyBudgetTrackerActivity extends Activity {
         mBudget = settings.getInt(BUDGET, 2000);
         mRunningBudget = settings.getInt(RUNNING_BUDGET, 2000);
     }
+    
+    private void lockAllButtons(){
+    	mInputBox.setClickable(false);
+    	mFoodInputBox.setClickable(false);
+    	mUnitSelect.setClickable(false);
+    	findViewById(R.id.input_button).setClickable(false);
+    	findViewById(R.id.m_history_button).setClickable(false);
+    	findViewById(R.id.m_settings_button).setClickable(false);
+    }
+    
+    private void unlockAllButtons(){
+    	mInputBox.setClickable(true);
+    	mFoodInputBox.setClickable(true);
+    	mUnitSelect.setClickable(true);
+    	findViewById(R.id.input_button).setClickable(true);
+    	findViewById(R.id.m_history_button).setClickable(true);
+    	findViewById(R.id.m_settings_button).setClickable(true);    	
+    }	
 }
