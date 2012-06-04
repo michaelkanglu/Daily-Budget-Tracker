@@ -12,7 +12,8 @@
         	android:layout_weight = "1"
 	    	android:layout_width="0dp" 
 	    	android:layout_height="wrap_content"
-	    	android:hint="@string/update_message"	/>
+	    	android:hint="@string/update_message"
+	    	android:inputType="number" />
 	
 		<Button 
         	android:id="@+id/update_button"

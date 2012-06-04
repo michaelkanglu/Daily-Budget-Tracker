@@ -123,7 +123,7 @@ public class SettingsActivity extends Activity {
     					email_msg.show();
     					
 				        storeExportSettings(email, true);
-				        //sendEmail();
+				        sendEmail();
 				        Toast.makeText(getApplicationContext(), getHistory(), Toast.LENGTH_LONG).show();
     				}
     			}
