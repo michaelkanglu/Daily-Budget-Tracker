@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -117,11 +119,12 @@ public class SettingsActivity extends Activity {
     				}
     				else {
     					// Checkbox checked and has an email address. Sends emails.
-    					Toast email_msg = Toast.makeText(getApplicationContext(), "Ok, I have an email address.", Toast.LENGTH_SHORT);
+    					Toast email_msg = Toast.makeText(getApplicationContext(), "Emails will be sent.", Toast.LENGTH_SHORT);
     					email_msg.show();
     					
 				        storeExportSettings(email, true);
-				       sendEmail();
+				        //sendEmail();
+				        Toast.makeText(getApplicationContext(), getHistory(), Toast.LENGTH_LONG).show();
     				}
     			}
     			else {
@@ -134,7 +137,7 @@ public class SettingsActivity extends Activity {
 			        editor.putBoolean(DailyBudgetTrackerActivity.EXPORT, false);
 			        editor.commit();
 			        
-			        stopEmail();
+			        //stopEmail();
     			}
     		}
     	});
@@ -183,8 +186,7 @@ public class SettingsActivity extends Activity {
 		String uriText =
 		    "mailto:" + email +
 		    "?subject=" + URLEncoder.encode("[Daily Budget Tracker] Yesterday's calorie history:") + 
-		    "&body=" + URLEncoder.encode("stuff");
-
+		    "&body=" + URLEncoder.encode(getHistory());
 		Uri uri = Uri.parse(uriText);
 
 		Intent send_email = new Intent(Intent.ACTION_SENDTO);
@@ -195,4 +197,27 @@ public class SettingsActivity extends Activity {
 	public void stopEmail() {
 	}
     
+	public String getHistory() {
+		SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
+		int budget = settings.getInt(DailyBudgetTrackerActivity.BUDGET, 2000);
+		int total = 0;
+		
+		StringBuffer history = new StringBuffer();
+
+		// create string of food and value for previous day's consumption
+		TrackingDatabase db_helper = new TrackingDatabase(getApplicationContext());
+		SQLiteDatabase db = db_helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + "Track", null);  //TODO modify query
+        if (cursor.moveToFirst()) {
+            do {
+            	String name = cursor.getString(1);
+            	int value = Integer.parseInt(cursor.getString(2));
+            	total += value;
+				history.append(name + ", " + value + "\n");
+            } while (cursor.moveToNext());
+        }
+        db.close();
+		history.insert(0, "Yesterday, you had " + total + " out of " + budget + " calories.\nIt consisted of:\n");
+		return history.toString();
+	}
 }
