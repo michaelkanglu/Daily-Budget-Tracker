@@ -26,7 +26,8 @@
     <string name="history_edit_food">Food</string>
     <string name="history_edit_value">Calories</string>
 	
-	
+	<string name="export">Export results daily</string>	
+	<string name="email">Email address</string>
 
     <string-array name="unit_array">
         <item>calories</item>

@@ -21,6 +21,9 @@ public class DailyBudgetTrackerActivity extends Activity {
 	public static final String PREFS_NAME = "budgettracker.MyPrefsFile";
 	static final String RUNNING_BUDGET = "budgettracker.running_budget";
 	static final String BUDGET = "budgettracker.budget";
+	
+	static final String EMAIL = "budgettracker.email";
+	static final String EXPORT = "budgettracker.export";
 
 	static final String LAST_DAY = "budgettracker.lday";
 	static final String LAST_MONTH = "budgettracker.lmonth";
