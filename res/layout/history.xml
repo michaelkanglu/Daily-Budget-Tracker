@@ -21,11 +21,28 @@
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/h_button_back"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/button_back"
-        android:onClick="goBack" />
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal">
+        
+        <Button
+        	android:id="@+id/h_display_toggle"
+        	android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1"
+        	android:text="@string/history_yesterday"
+        	android:onClick="displayToggle" />
+        
+        <Button
+        	android:id="@+id/h_button_back"
+        	android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1"
+        	android:text="@string/button_back"
+        	android:onClick="goBack" />
+    </LinearLayout>
+
+
 
 </LinearLayout>

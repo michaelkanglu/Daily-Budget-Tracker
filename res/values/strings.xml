@@ -25,6 +25,8 @@
 	
     <string name="history_edit_food">Food</string>
     <string name="history_edit_value">Calories</string>
+    <string name="history_today">View Today\'s</string>
+    <string name="history_yesterday">View Yesterday\'s</string>
 	
 	<string name="export">Export results daily</string>	
 	<string name="email">Email address</string>

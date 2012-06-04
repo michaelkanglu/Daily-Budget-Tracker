@@ -34,6 +34,7 @@ public class CalorieHistory extends Activity {
 	private static final int DINNER_BOUND = 16;
 	
 	private TrackingDatabase db_helper;
+	private boolean displayToday = true;
 	private static final int EDIT_ID = Menu.FIRST;
     private static final int DELETE_ID = Menu.FIRST + 1;
     private FoodRow sRow;
@@ -84,7 +85,8 @@ public class CalorieHistory extends Activity {
         db_helper = new TrackingDatabase(getApplicationContext());
         
         createTitle(tbl);
-        populateTable(tbl);  
+        populateTable(tbl);
+        setToggleButton();
     }
   
     public void populateTable(TableLayout tbl) {
@@ -98,9 +100,16 @@ public class CalorieHistory extends Activity {
 		today.set(Calendar.SECOND,0);
 		today.set(Calendar.MILLISECOND,0);
 		time = today.getTimeInMillis();
-    	
+		
     	SQLiteDatabase db = db_helper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + "Track WHERE DateTime > " + time, null);
+    	Cursor cursor;
+    	if(displayToday){
+    		cursor = db.rawQuery("SELECT * FROM " + "Track WHERE DateTime > " + time, null);
+    	}
+    	else{
+    		cursor = db.rawQuery("SELECT * FROM " + "Track WHERE DateTime < " + time, null);
+    	}
+    	
         if (cursor.moveToFirst()) {
             do {
                 int id = Integer.parseInt(cursor.getString(0));
@@ -152,7 +161,10 @@ public class CalorieHistory extends Activity {
     	
     	// Applying styles to the text.
         TextView title = new TextView(this);
-        title.setText("Today you ate:");
+        if(displayToday)
+        	title.setText("Today you ate");
+        else
+        	title.setText("Yesterday you ate");
         title.setTextSize(36);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         
@@ -292,12 +304,14 @@ public class CalorieHistory extends Activity {
 		int value = Integer.parseInt(((TextView)sRow.getVirtualChildAt(1)).getText().toString());
 		
 		//Update running budget
-        SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        int runningBudget = settings.getInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, 2000);
-        runningBudget = runningBudget + value;
-        editor.putInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, runningBudget);
-        editor.commit();
+		if(displayToday){
+			SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
+			SharedPreferences.Editor editor = settings.edit();
+			int runningBudget = settings.getInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, 2000);
+			runningBudget = runningBudget + value;
+			editor.putInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, runningBudget);
+			editor.commit();
+		}
 		
         //remove entry from database
 		db_helper.deleteTuple(id);
@@ -361,14 +375,16 @@ public class CalorieHistory extends Activity {
 		Food food = new Food(nFood, nValue);
 		
 		//update the running budget
-		int diff = oValue - nValue;
-		SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        int runningBudget = settings.getInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, 2000);
-        runningBudget = runningBudget + diff;
-        editor.putInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, runningBudget);
-        editor.commit();
-		
+		if(displayToday){
+			int diff = oValue - nValue;
+			SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
+			SharedPreferences.Editor editor = settings.edit();
+			int runningBudget = settings.getInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, 2000);
+			runningBudget = runningBudget + diff;
+			editor.putInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, runningBudget);
+			editor.commit();
+		}
+			
 		//update the row
 		((TextView)sRow.getVirtualChildAt(0)).setText(nFood);
 		((TextView)sRow.getVirtualChildAt(1)).setText("" + nValue);
@@ -379,5 +395,21 @@ public class CalorieHistory extends Activity {
 	
 	public void goBack(View view) {
 		finish();
+	}
+	
+	public void displayToggle(View view){
+		displayToday = !displayToday;
+		TableLayout tbl = (TableLayout)findViewById(R.id.foodtable);
+        tbl.removeAllViews();
+		createTitle(tbl);
+        populateTable(tbl);
+        setToggleButton();
+	}
+	
+	public void setToggleButton(){
+		if(displayToday)
+			((Button)findViewById(R.id.h_display_toggle)).setText(this.getResources().getString(R.string.history_yesterday));
+		else
+			((Button)findViewById(R.id.h_display_toggle)).setText(this.getResources().getString(R.string.history_today));
 	}
 }

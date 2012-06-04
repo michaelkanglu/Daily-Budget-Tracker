@@ -81,4 +81,11 @@ public class TrackingDatabase extends SQLiteOpenHelper {
 		onCreate(db);
 		db.close();*/
 	}
+	
+	public void resetDatabase () {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.execSQL("DROP TABLE IF EXISTS " + DB_NAME);
+		onCreate(db);
+		db.close();
+	}
 }

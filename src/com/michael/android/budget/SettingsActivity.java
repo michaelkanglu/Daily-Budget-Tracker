@@ -38,7 +38,7 @@ public class SettingsActivity extends Activity {
         editor.commit();
         
     	TrackingDatabase db_helper = new TrackingDatabase(getApplicationContext());
-    	db_helper.clearDatabase();
+    	db_helper.resetDatabase();
     	
         updateBudgetText(budget);
     }
