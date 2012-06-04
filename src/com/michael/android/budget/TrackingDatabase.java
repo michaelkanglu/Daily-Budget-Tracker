@@ -1,5 +1,7 @@
 package com.michael.android.budget;
 
+import java.util.Calendar;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -62,9 +64,21 @@ public class TrackingDatabase extends SQLiteOpenHelper {
 	}
 	
 	public void clearDatabase () {
+		long time = System.currentTimeMillis();
+		Calendar yesterday = Calendar.getInstance();
+		yesterday.setTimeInMillis(time - 86400000);
+		yesterday.set(Calendar.HOUR_OF_DAY, 0);
+		yesterday.set(Calendar.MINUTE, 0);
+		yesterday.set(Calendar.SECOND,0);
+		yesterday.set(Calendar.MILLISECOND,0);
+		time = yesterday.getTimeInMillis();
+		
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.execSQL("DROP TABLE IF EXISTS " + DB_NAME);
+		db.delete(DB_NAME, DATE_TIME+"<?", new String [] {""+time});
+        db.close();
+		
+		/*db.execSQL("DROP TABLE IF EXISTS " + DB_NAME);
 		onCreate(db);
-		db.close();
+		db.close();*/
 	}
 }

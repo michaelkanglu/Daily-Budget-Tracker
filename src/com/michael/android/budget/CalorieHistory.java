@@ -1,5 +1,6 @@
 package com.michael.android.budget;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import android.app.Activity;
@@ -88,14 +89,24 @@ public class CalorieHistory extends Activity {
   
     public void populateTable(TableLayout tbl) {
     	resetHeadingFlags();
+    	
+		long time = System.currentTimeMillis();
+		Calendar today = Calendar.getInstance();
+		today.setTimeInMillis(time);
+		today.set(Calendar.HOUR_OF_DAY, 0);
+		today.set(Calendar.MINUTE, 0);
+		today.set(Calendar.SECOND,0);
+		today.set(Calendar.MILLISECOND,0);
+		time = today.getTimeInMillis();
+    	
     	SQLiteDatabase db = db_helper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + "Track", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + "Track WHERE DateTime > " + time, null);
         if (cursor.moveToFirst()) {
             do {
                 int id = Integer.parseInt(cursor.getString(0));
             	String name = cursor.getString(1);
             	int value = Integer.parseInt(cursor.getString(2));
-            	long time = cursor.getLong(cursor.getColumnIndex("DateTime"));
+            	time = cursor.getLong(cursor.getColumnIndex("DateTime"));
             	Log.i("display", "id: " + id + " name: " + name + " cal: " + value); //TODO
                 Food fd = new Food(name, value);
                 createFoodRow(tbl, fd, id, time);
