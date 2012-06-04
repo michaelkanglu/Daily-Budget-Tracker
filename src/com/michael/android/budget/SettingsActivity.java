@@ -121,7 +121,7 @@ public class SettingsActivity extends Activity {
     					email_msg.show();
     					
 				        storeExportSettings(email, true);
-				       //sendEmail();
+				       sendEmail();
     				}
     			}
     			else {
@@ -134,7 +134,7 @@ public class SettingsActivity extends Activity {
 			        editor.putBoolean(DailyBudgetTrackerActivity.EXPORT, false);
 			        editor.commit();
 			        
-			        //stopEmail();
+			        stopEmail();
     			}
     		}
     	});
