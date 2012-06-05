@@ -1,14 +1,14 @@
 package com.michael.android.budget;
 
-import java.net.URLEncoder;
-
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class SettingsActivity extends Activity {
+	private static final int NOTIFY_EMAIL = 1;
+	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
@@ -123,8 +125,8 @@ public class SettingsActivity extends Activity {
     					email_msg.show();
     					
 				        storeExportSettings(email, true);
-				        sendEmail();
-				        Toast.makeText(getApplicationContext(), getHistory(), Toast.LENGTH_LONG).show();
+				        createNotification();
+				        //sendEmail();
     				}
     			}
     			else {
@@ -136,8 +138,6 @@ public class SettingsActivity extends Activity {
 			        SharedPreferences.Editor editor = settings.edit();
 			        editor.putBoolean(DailyBudgetTrackerActivity.EXPORT, false);
 			        editor.commit();
-			        
-			        //stopEmail();
     			}
     		}
     	});
@@ -183,20 +183,20 @@ public class SettingsActivity extends Activity {
 	public void sendEmail() {
     	SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
     	String email = settings.getString(DailyBudgetTrackerActivity.EMAIL, "");
-		String uriText =
-		    "mailto:" + email +
-		    "?subject=" + URLEncoder.encode("[Daily Budget Tracker] Yesterday's calorie history:") + 
-		    "&body=" + URLEncoder.encode(getHistory());
-		Uri uri = Uri.parse(uriText);
+		
+		Intent i = new Intent(Intent.ACTION_SEND);
+		i.setType("message/rfc822");
+		i.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+		i.putExtra(Intent.EXTRA_SUBJECT, "[Daily Budget Tracker] Yesterday's calorie history:");
+		i.putExtra(Intent.EXTRA_TEXT, getHistory());
+		try {
+		    startActivity(Intent.createChooser(i, "Send mail"));
+		} catch (android.content.ActivityNotFoundException ex) {
+		    Toast.makeText(SettingsActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+		}
 
-		Intent send_email = new Intent(Intent.ACTION_SENDTO);
-		send_email.setData(uri);
-		startActivity(send_email);
 	}
 	
-	public void stopEmail() {
-	}
-    
 	public String getHistory() {
 		SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
 		int budget = settings.getInt(DailyBudgetTrackerActivity.BUDGET, 2000);
@@ -217,7 +217,38 @@ public class SettingsActivity extends Activity {
             } while (cursor.moveToNext());
         }
         db.close();
-		history.insert(0, "Yesterday, you had " + total + " out of " + budget + " calories.\nIt consisted of:\n");
+		history.insert(0, "Yesterday, you consumed " + total + " out of " + budget + " calories.\n\nIt consisted of:\n");
 		return history.toString();
+	}
+	
+	public void createNotification() {
+		String ns = Context.NOTIFICATION_SERVICE;
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+		
+		int icon = R.drawable.ic_launcher; //TODO change this icon lol
+		CharSequence contentTitle = "Daily Budget Tracker: Email notice";
+		long when = System.currentTimeMillis();
+
+		Notification notification = new Notification(icon, contentTitle, when);
+		notification.flags = Notification.FLAG_AUTO_CANCEL;
+		
+		Context context = getApplicationContext();
+		CharSequence contentText = "Yesterday's results are available.";
+		
+		//
+		SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
+    	String email = settings.getString(DailyBudgetTrackerActivity.EMAIL, "");
+		Intent i = new Intent(Intent.ACTION_SEND);
+		i.setType("message/rfc822");
+		i.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+		i.putExtra(Intent.EXTRA_SUBJECT, "[Daily Budget Tracker] Yesterday's calorie history:");
+		i.putExtra(Intent.EXTRA_TEXT, getHistory());
+		
+		//Intent notificationIntent = new Intent(this, SettingsActivity.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i, 0);
+
+		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+		
+		mNotificationManager.notify(NOTIFY_EMAIL, notification);
 	}
 }
