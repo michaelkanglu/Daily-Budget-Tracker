@@ -1,12 +1,13 @@
 package com.michael.android.budget;
 
-import java.net.URLEncoder;
+import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class SettingsActivity extends Activity {
+	public static PendingIntent emailNote;
+	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
@@ -104,11 +107,10 @@ public class SettingsActivity extends Activity {
     	final CheckBox check = (CheckBox) findViewById(R.id.export_check);
     	check.setOnClickListener(new OnClickListener() {
     		public void onClick(View v) {
+				String email = getEmail();
     			if( ((CheckBox) v).isChecked() ) {
-    				// send emails!
-    				String email = getEmail();
     				if (email == null) {
-    					// Checkbox checked but no email address. Does not send emails.
+    					// Checkbox checked but no email address. Does not send notifications.
     					Toast no_email_msg = Toast.makeText(getApplicationContext(), "Please enter an email address.", Toast.LENGTH_SHORT);
     					no_email_msg.show();
     					
@@ -116,31 +118,30 @@ public class SettingsActivity extends Activity {
     					storeExportSettings(null, false);
     				}
     				else {
-    					// Checkbox checked and has an email address. Sends emails.
-    					Toast email_msg = Toast.makeText(getApplicationContext(), "Ok, I have an email address.", Toast.LENGTH_SHORT);
+    					// Checkbox checked and has an email address. Send email notifications.
+    					Toast email_msg = Toast.makeText(getApplicationContext(), "Emails will be sent.", Toast.LENGTH_SHORT);
     					email_msg.show();
     					
+						// Update preferences for email export.
 				        storeExportSettings(email, true);
-				       //sendEmail();
+				        scheduleNotification();
     				}
     			}
     			else {
-    				// stop sending emails!
+    				// Stop sending notifications!
 					Toast stop = Toast.makeText(getApplicationContext(), "Emails will not be sent.", Toast.LENGTH_SHORT);
 					stop.show();
 					
-	    			SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-			        SharedPreferences.Editor editor = settings.edit();
-			        editor.putBoolean(DailyBudgetTrackerActivity.EXPORT, false);
-			        editor.commit();
-			        
-			        //stopEmail();
+					// Update preferences for email export.
+	    			storeExportSettings(email, false);
+					stopNotification();
     			}
     		}
     	});
     }
     
     public String getEmail() {
+    	// Returns the text found in the EditText email field.
     	EditText et = (EditText) findViewById(R.id.email);
     	Editable email = et.getText();
     	if (email.length() == 0) {
@@ -177,22 +178,30 @@ public class SettingsActivity extends Activity {
         editor.commit();
 	}
 	
-	public void sendEmail() {
-    	SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-    	String email = settings.getString(DailyBudgetTrackerActivity.EMAIL, "");
-		String uriText =
-		    "mailto:" + email +
-		    "?subject=" + URLEncoder.encode("[Daily Budget Tracker] Yesterday's calorie history:") + 
-		    "&body=" + URLEncoder.encode("stuff");
-
-		Uri uri = Uri.parse(uriText);
-
-		Intent send_email = new Intent(Intent.ACTION_SENDTO);
-		send_email.setData(uri);
-		startActivity(send_email);
+	public void scheduleNotification() {
+		// Schedule the notifications for everyday.
+		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		Intent intent = new Intent(this, EmailReceiver.class);
+		emailNote = PendingIntent.getBroadcast(this, 0, intent, 0);
+		
+		Calendar time = Calendar.getInstance();
+		time.setTimeInMillis(System.currentTimeMillis());
+		time.set(Calendar.HOUR_OF_DAY, 0);
+		time.set(Calendar.MINUTE, 0);
+		time.set(Calendar.SECOND, 0);
+		time.set(Calendar.MILLISECOND, 0);
+		alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), AlarmManager.INTERVAL_DAY, emailNote);
 	}
 	
-	public void stopEmail() {
+	public void stopNotification() {
+		// Stops the daily notifications.
+		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		alarmMgr.cancel(emailNote);
 	}
+<<<<<<< HEAD
     
 }
+=======
+    
+}
+>>>>>>> email_export
