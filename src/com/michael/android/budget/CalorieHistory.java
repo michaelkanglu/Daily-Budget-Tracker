@@ -187,7 +187,10 @@ public class CalorieHistory extends Activity {
 	public void makeHeading(TableLayout tbl, long date) {
 		// Creates a heading depending on the time of day the food was first entered
 		// into the app.
-		int hour = new Date(date).getHours();
+		Calendar time = Calendar.getInstance();
+		time.setTimeInMillis(date);
+		int hour = time.get(Calendar.HOUR_OF_DAY);
+		
 		if (withinTime(hour, BREAKFAST_BOUND, LUNCH_BOUND) && create_breakfast) {
 			tbl.addView(createHeading(tbl, "In the morning:"));
 			create_breakfast = false;
