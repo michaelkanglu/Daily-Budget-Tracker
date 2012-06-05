@@ -145,36 +145,19 @@ public class DailyBudgetTrackerActivity extends Activity {
     /*reads food information user inputs and updates database and budget appropriately**/
     public void inputValue(View view){
     	lockAllButtons();
-    	String v_input = mInputBox.getText().toString();
+		int value = Integer.parseInt(mInputBox.getText().toString());
     	String f_input = mFoodInputBox.getText().toString();
-    	int value = 0;
-    	
-    	Context context = getApplicationContext();
-		int duration = Toast.LENGTH_LONG;
-    	//catch number format exception
-    	try{
-    		 value = Integer.parseInt(v_input);
-    	}
-    	catch(NumberFormatException e){
-    		
-    		CharSequence text = "The value is not a valid, whole number!";
-    		Toast toast = Toast.makeText(context, text, duration);
-    		toast.show();
-    		mInputBox.setText(null);
-    		unlockAllButtons();
-    		return;
-    	}
-    	
-    	//catch negative numbers
-    	if(value < 0){
-    		CharSequence text = "The value is less than zero!";
 
-    		Toast toast = Toast.makeText(context, text, duration);
-    		toast.show();
-    		mInputBox.setText(null);
-    		unlockAllButtons();
-    		return;
-    	}
+
+		// Catch negative numbers
+		if(value < 0){
+			CharSequence text = "The value is less than zero!";
+			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
+			toast.show();
+			mInputBox.setText(null);
+			unlockAllButtons();
+			return;
+		}
     	
     	String unit = ((TextView)mUnitSelect.getSelectedView()).getText().toString();
     	value = value * getUnitValue(unit);

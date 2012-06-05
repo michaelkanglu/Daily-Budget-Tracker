@@ -1,7 +1,6 @@
 package com.michael.android.budget;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import android.app.Activity;
 import android.content.Context;
@@ -29,36 +28,46 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class CalorieHistory extends Activity {
+	
+	// Defines times for the different meals of the day
 	private static final int BREAKFAST_BOUND = 5;
 	private static final int LUNCH_BOUND = 11;
 	private static final int DINNER_BOUND = 16;
-	private static final int MIDNIGHT_BOUND = 0;
+	private static final int MIDNIGHT_BOUND = 24;
 	
-	private TrackingDatabase db_helper;
+	// Boolean toggle for displaying today's or yesterday's contents
 	private boolean displayToday = true;
+	
+	// For Database access and manipulation
+	private TrackingDatabase db_helper;
 	private static final int EDIT_ID = Menu.FIRST;
     private static final int DELETE_ID = Menu.FIRST + 1;
     private FoodRow sRow;
-
-    private boolean create_breakfast = true; //flag whether to create a new heading
-    private boolean create_lunch = true; //flag whether to create a new heading
-    private boolean create_dinner = true; //flag whether to create a new heading
+    
+    // Flag whether to create a new heading
+    private boolean create_breakfast = true; 
+    private boolean create_lunch = true; 
+    private boolean create_dinner = true; 
     private boolean create_midnight = true;
     
     private static class FoodRow extends TableRow{
-    	private int myID;
-    	private static boolean rowColorFlag = true;  // True is light gray, false is dark gray.
+        // TableRow that contains food information 
+    	// and contains id of corresponding database entry
+
+    	private int databaseID;
+    	private static boolean rowColorFlag = true;  
+    	// True is light gray, false is dark gray.
     	
     	public FoodRow (Context context) {
     		super(context);
     	}
     	
-    	public void setID(int id){
-    		myID = id;
+    	public void setDatabaseID(int id){
+    		databaseID = id;
     	}
     	
-    	public int getID(){
-    		return myID;
+    	public int getDatabaseID(){
+    		return databaseID;
     	}
     	
     	public void setCorrectColor() {
@@ -91,9 +100,13 @@ public class CalorieHistory extends Activity {
         setToggleButton();
     }
   
+    
     public void populateTable(TableLayout tbl) {
+        // Populate the history table with all database entries
+    	
     	resetHeadingFlags();
     	
+    	// Set Today/Yesterday threshold
 		long time = System.currentTimeMillis();
 		Calendar today = Calendar.getInstance();
 		today.setTimeInMillis(time);
@@ -103,13 +116,16 @@ public class CalorieHistory extends Activity {
 		today.set(Calendar.MILLISECOND,0);
 		time = today.getTimeInMillis();
 		
+		// Retrieve entries and add them to tbl
     	SQLiteDatabase db = db_helper.getReadableDatabase();
     	Cursor cursor;
     	if(displayToday){
-    		cursor = db.rawQuery("SELECT * FROM " + "Track WHERE DateTime > " + time, null);
+    		cursor = db.rawQuery("SELECT * FROM Track " + 
+    							 "WHERE DateTime > " + time, null);
     	}
     	else{
-    		cursor = db.rawQuery("SELECT * FROM " + "Track WHERE DateTime < " + time, null);
+    		cursor = db.rawQuery("SELECT * FROM Track " + 
+    							 "WHERE DateTime < " + time, null);
     	}
     	
         if (cursor.moveToFirst()) {
@@ -118,16 +134,26 @@ public class CalorieHistory extends Activity {
             	String name = cursor.getString(1);
             	int value = Integer.parseInt(cursor.getString(2));
             	time = cursor.getLong(cursor.getColumnIndex("DateTime"));
-            	Log.i("display", "id: " + id + " name: " + name + " cal: " + value); //TODO
                 Food fd = new Food(name, value);
                 createFoodRow(tbl, fd, id, time);
             } while (cursor.moveToNext());
         }
         db.close();
-    }
-    
+    }  
+	
+	public void resetHeadingFlags() {
+		
+		create_breakfast = true;
+		create_lunch = true;
+		create_dinner = true;
+		create_midnight = true;
+	}
+	
     public void createFoodRow (TableLayout tbl, Food fd, int id, long time) {
-    	// Gets data from the parameters, and creates the visual entry for the food.
+    	// Generates a foodRow object from fd and adds it to the table
+    	
+    	// Gets data from the parameters, 
+    	// and creates the visual entry for the food.
     	makeHeading(tbl, time);
     	FoodRow fRow = new FoodRow(this);
     	fRow.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -153,7 +179,7 @@ public class CalorieHistory extends Activity {
     	fRow.addView(cal);
     	fRow.addView(calText);
     	
-        fRow.setID(id);
+        fRow.setDatabaseID(id);
     	registerForContextMenu(fRow);
     	tbl.addView(fRow);
     }
@@ -187,41 +213,42 @@ public class CalorieHistory extends Activity {
 	}
 
 	public void makeHeading(TableLayout tbl, long date) {
-		// Creates a heading depending on the time of day the food was first entered
-		// into the app.
+		// Creates a heading depending on the time of day 
+		// the food was first entered into the app.
+		
 		Calendar time = Calendar.getInstance();
 		time.setTimeInMillis(date);
 		int hour = time.get(Calendar.HOUR_OF_DAY);
 		
-		if (withinTime(hour, BREAKFAST_BOUND, LUNCH_BOUND) && create_breakfast) {
-			tbl.addView(createHeading(tbl, "In the morning:"));
-			create_breakfast = false;
-		} else if (withinTime(hour, LUNCH_BOUND, DINNER_BOUND) && create_lunch) {
-			tbl.addView(createHeading(tbl, "In the daytime:"));
-			create_lunch = false;
-		} else if (withinTime(hour, DINNER_BOUND, 24) && create_dinner) {
-			tbl.addView(createHeading(tbl, "In the evening:"));
-			create_dinner = false;
-		} else if (withinTime(hour, MIDNIGHT_BOUND, BREAKFAST_BOUND) && create_midnight) {
+		if (withinTime(hour, MIDNIGHT_BOUND, BREAKFAST_BOUND) 
+				&& create_midnight) {
 			tbl.addView(createHeading(tbl, "Past midnight:"));
 			create_midnight = false;
+		} else if (withinTime(hour, BREAKFAST_BOUND, LUNCH_BOUND) 
+				&& create_breakfast) {
+			tbl.addView(createHeading(tbl, "In the morning:"));
+			create_breakfast = false;
+		} else if (withinTime(hour, LUNCH_BOUND, DINNER_BOUND) 
+				&& create_lunch) {
+			tbl.addView(createHeading(tbl, "In the daytime:"));
+			create_lunch = false;
+		} else if (withinTime(hour, DINNER_BOUND, MIDNIGHT_BOUND) 
+				&& create_dinner) {
+			tbl.addView(createHeading(tbl, "In the evening:"));
+			create_dinner = false;
 		}
 	}
 	
-	public void resetHeadingFlags() {
-		create_breakfast = true;
-		create_lunch = true;
-		create_dinner = true;
-		create_midnight = true;
-	}
-	
 	public boolean withinTime(int val, int start, int end) {
-		return val >= start && val < end;
+		return (val%24) >= (start%24) && val < end;
 	}
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
+		// Generates a context menu for the purpose
+		// of editing/deleting database entries
+		
 		super.onCreateContextMenu(menu, v, menuInfo);
 		sRow = (FoodRow) v;
 		
@@ -241,32 +268,19 @@ public class CalorieHistory extends Activity {
 	    return super.onContextItemSelected(item);
 	}
 
-	public void updateColors(TableLayout tbl) {
-		// Repaint backgrounds starting from first element
-		// This is called upon deleting an entry from the history.
-		FoodRow.setFlag(true);
-		for(int i=0; i<tbl.getChildCount(); i++) {
-			if(tbl.getChildAt(i) instanceof FoodRow){
-				FoodRow tempRow = (FoodRow) tbl.getChildAt(i);
-				tempRow.setCorrectColor();
-			}
-			else {
-				FoodRow.setFlag(true);
-			}
-		}
-	}
-		
+
 	private void launchEditMenu() {
-
-		//initialize the popupwindow and its information
-		LayoutInflater layoutInflater  = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
-	    final View popupView = layoutInflater.inflate(R.layout.edit_history_popup, null);  
-	    final PopupWindow popupWindow = new PopupWindow(popupView, 
-	               										LayoutParams.WRAP_CONTENT,  
-	               										LayoutParams.WRAP_CONTENT);
-	    
-
+		// Launches the edit menu to edit entries
 		
+		// Initialize the popupwindow and its information
+		LayoutInflater layoutInflater  =
+				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
+	    final View popupView = 
+	    		layoutInflater.inflate(R.layout.edit_history_popup, null);  
+	    final PopupWindow popupWindow = new PopupWindow(popupView, 
+	            										LayoutParams.WRAP_CONTENT,  
+	            										LayoutParams.WRAP_CONTENT);
+	    
 		String oFood = ((TextView)sRow.getVirtualChildAt(0)).getText().toString();
 		int oValue = Integer.parseInt(((TextView)sRow.getVirtualChildAt(1)).getText().toString());
 		
@@ -276,20 +290,18 @@ public class CalorieHistory extends Activity {
 		foodInputBox.setText(oFood);
 		valueInputBox.setText(""+oValue);
 		
-		//determine if there's room at the bottom
-		if(checkMenuSpace(popupView)){
-			//display below the selected row
+		// Determine if there's room at the bottom
+		if(hasBottomMenuSpace(popupView)){
 			popupWindow.showAsDropDown(sRow, 50, -5);
 		}
 		else{
-			//display above the selected row
 			popupWindow.showAsDropDown(sRow, 50, -30 + (popupView.getMeasuredHeight() * -1));
 		}
 		
 		popupWindow.setFocusable(true);
 		popupWindow.update();
 		
-		//when edit button clicked
+		// When edit button clicked
 	    Button btnSubmitEdit = (Button)popupView.findViewById(R.id.h_submit_edit);
 	    btnSubmitEdit.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -298,7 +310,7 @@ public class CalorieHistory extends Activity {
 	    	}
 	    });
 	    
-	    //when cancel button clicked
+	    // When cancel button clicked
 	    Button btnCancelEdit = (Button)popupView.findViewById(R.id.h_cancel_edit);
 	    btnCancelEdit.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -306,31 +318,11 @@ public class CalorieHistory extends Activity {
 	    	}
 	    });
 	}
-	
-    public void deleteRow(){
-		TableLayout tbl = (TableLayout) findViewById(R.id.foodtable);
-		int id = sRow.getID();
-		int value = Integer.parseInt(((TextView)sRow.getVirtualChildAt(1)).getText().toString());
-		
-		//Update running budget
-		if(displayToday){
-			SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-			SharedPreferences.Editor editor = settings.edit();
-			int runningBudget = settings.getInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, 2000);
-			runningBudget = runningBudget + value;
-			editor.putInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, runningBudget);
-			editor.commit();
-		}
-		
-        //remove entry from database
-		db_helper.deleteTuple(id);
-		
-		//remove row from table
-		tbl.removeView(sRow);
-		updateColors(tbl);
-	}
     
-	private boolean checkMenuSpace(View popupView){
+	private boolean hasBottomMenuSpace(View popupView){
+		// Returns true if there's enough room to display
+		// popupView below the selected row, false otherwise
+		
 		popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 		ScrollView scroll = (ScrollView)findViewById(R.id.foodscroll);
 		int scrollHeight = scroll.getHeight();
@@ -343,47 +335,32 @@ public class CalorieHistory extends Activity {
 
 		return (scrollHeight - rowYPosition) > popHeight;
 	}
-	
+
 	private void editRow(View popupView, PopupWindow popupWindow){
-		//String oFood = ((TextView)sRow.getVirtualChildAt(0)).getText().toString();
-		//fetch all relevant information
+		// Edits database, table, and running budget
+		
+		// Fetch all relevant information
 		int oValue = Integer.parseInt(((TextView)sRow.getVirtualChildAt(1)).getText().toString());
 		
 		EditText foodInputBox = (EditText)popupView.findViewById(R.id.e_food);
 		EditText valueInputBox = (EditText)popupView.findViewById(R.id.e_value);
-		
+
 		String nFood = foodInputBox.getText().toString();
-		int nValue;
-		
-    	Context context = getApplicationContext();
-		int duration = Toast.LENGTH_LONG;
-		try{
-   		 	nValue = Integer.parseInt(valueInputBox.getText().toString());
-		}
-		//catch non-numerals
-		catch(NumberFormatException e){
-   		
-			CharSequence text = "The value is not a valid, whole number!";
-			Toast toast = Toast.makeText(context, text, duration);
-			toast.show();
-			valueInputBox.setText(null);
-			return;
-		}
-   	
-		//catch negative numbers
+		int nValue = Integer.parseInt(valueInputBox.getText().toString());
+
+		// Catch negative numbers
 		if(nValue < 0){
 			CharSequence text = "The value is less than zero!";
-
-			Toast toast = Toast.makeText(context, text, duration);
+			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
 			toast.show();
 			valueInputBox.setText(null);
 			return;
 		}
-		int rowID = sRow.getID();
-		
+		int rowID = sRow.getDatabaseID();
+
 		Food food = new Food(nFood, nValue);
-		
-		//update the running budget
+
+		// Update the running budget
 		if(displayToday){
 			int diff = oValue - nValue;
 			SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
@@ -393,20 +370,60 @@ public class CalorieHistory extends Activity {
 			editor.putInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, runningBudget);
 			editor.commit();
 		}
-			
-		//update the row
+	
+		// Update the row
 		((TextView)sRow.getVirtualChildAt(0)).setText(nFood);
 		((TextView)sRow.getVirtualChildAt(1)).setText("" + nValue);
-        
-		//update the database
+
+		// Update the database
 		db_helper.updateTuple(rowID, food);
-		}
-	
-	public void goBack(View view) {
-		finish();
 	}
 	
+    public void deleteRow(){
+    	// Delete entry from database, table, and running budget
+    	
+    	TableLayout tbl = (TableLayout) findViewById(R.id.foodtable);
+		int id = sRow.getDatabaseID();
+		int value = Integer.parseInt(((TextView)sRow.getVirtualChildAt(1)).getText().toString());
+		
+		// Update running budget
+		if(displayToday){
+			SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
+			SharedPreferences.Editor editor = settings.edit();
+			int runningBudget = settings.getInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, 2000);
+			runningBudget = runningBudget + value;
+			editor.putInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, runningBudget);
+			editor.commit();
+		}
+		
+        // Remove entry from database
+		db_helper.deleteTuple(id);
+		
+		// Remove row from table
+		tbl.removeView(sRow);
+		updateColors(tbl);
+	}
+    
+	public void updateColors(TableLayout tbl) {
+		// Repaint backgrounds starting from first element
+		// This is called upon deleting an entry from the history.
+		
+		FoodRow.setFlag(true);
+		for(int i=0; i<tbl.getChildCount(); i++) {
+			if(tbl.getChildAt(i) instanceof FoodRow){
+				FoodRow tempRow = (FoodRow) tbl.getChildAt(i);
+				tempRow.setCorrectColor();
+			}
+			else {
+				FoodRow.setFlag(true);
+			}
+		}
+	}
+
 	public void displayToggle(View view){
+		// Toggle between viewing yesterday's and
+		// today's food. Reupdates everything
+		
 		displayToday = !displayToday;
 		TableLayout tbl = (TableLayout)findViewById(R.id.foodtable);
         tbl.removeAllViews();
@@ -421,4 +438,12 @@ public class CalorieHistory extends Activity {
 		else
 			((Button)findViewById(R.id.h_display_toggle)).setText(this.getResources().getString(R.string.history_today));
 	}
+	
+	public void goBack(View view) {
+		// The Back Button
+		
+		finish();
+	}
+	
+
 }
