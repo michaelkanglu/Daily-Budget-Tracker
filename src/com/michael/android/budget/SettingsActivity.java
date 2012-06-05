@@ -1,14 +1,13 @@
 package com.michael.android.budget;
 
+import java.util.Calendar;
+
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
@@ -19,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class SettingsActivity extends Activity {
-	private static final int NOTIFY_EMAIL = 1;
+	public static PendingIntent emailNote;
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -108,11 +107,10 @@ public class SettingsActivity extends Activity {
     	final CheckBox check = (CheckBox) findViewById(R.id.export_check);
     	check.setOnClickListener(new OnClickListener() {
     		public void onClick(View v) {
+				String email = getEmail();
     			if( ((CheckBox) v).isChecked() ) {
-    				// send emails!
-    				String email = getEmail();
     				if (email == null) {
-    					// Checkbox checked but no email address. Does not send emails.
+    					// Checkbox checked but no email address. Does not send notifications.
     					Toast no_email_msg = Toast.makeText(getApplicationContext(), "Please enter an email address.", Toast.LENGTH_SHORT);
     					no_email_msg.show();
     					
@@ -120,30 +118,30 @@ public class SettingsActivity extends Activity {
     					storeExportSettings(null, false);
     				}
     				else {
-    					// Checkbox checked and has an email address. Sends emails.
+    					// Checkbox checked and has an email address. Send email notifications.
     					Toast email_msg = Toast.makeText(getApplicationContext(), "Emails will be sent.", Toast.LENGTH_SHORT);
     					email_msg.show();
     					
+						// Update preferences for email export.
 				        storeExportSettings(email, true);
-				        createNotification();
-				        //sendEmail();
+				        scheduleNotification();
     				}
     			}
     			else {
-    				// stop sending emails!
+    				// Stop sending notifications!
 					Toast stop = Toast.makeText(getApplicationContext(), "Emails will not be sent.", Toast.LENGTH_SHORT);
 					stop.show();
 					
-	    			SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-			        SharedPreferences.Editor editor = settings.edit();
-			        editor.putBoolean(DailyBudgetTrackerActivity.EXPORT, false);
-			        editor.commit();
+					// Update preferences for email export.
+	    			storeExportSettings(email, false);
+					stopNotification();
     			}
     		}
     	});
     }
     
     public String getEmail() {
+    	// Returns the text found in the EditText email field.
     	EditText et = (EditText) findViewById(R.id.email);
     	Editable email = et.getText();
     	if (email.length() == 0) {
@@ -180,75 +178,25 @@ public class SettingsActivity extends Activity {
         editor.commit();
 	}
 	
-	public void sendEmail() {
-    	SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-    	String email = settings.getString(DailyBudgetTrackerActivity.EMAIL, "");
+	public void scheduleNotification() {
+		// Schedule the notifications for everyday.
+		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		Intent intent = new Intent(this, EmailReceiver.class);
+		emailNote = PendingIntent.getBroadcast(this, 0, intent, 0);
 		
-		Intent i = new Intent(Intent.ACTION_SEND);
-		i.setType("message/rfc822");
-		i.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
-		i.putExtra(Intent.EXTRA_SUBJECT, "[Daily Budget Tracker] Yesterday's calorie history:");
-		i.putExtra(Intent.EXTRA_TEXT, getHistory());
-		try {
-		    startActivity(Intent.createChooser(i, "Send mail"));
-		} catch (android.content.ActivityNotFoundException ex) {
-		    Toast.makeText(SettingsActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-		}
-
+		Calendar time = Calendar.getInstance();
+		time.setTimeInMillis(System.currentTimeMillis());
+		time.set(Calendar.HOUR_OF_DAY, 0);
+		time.set(Calendar.MINUTE, 0);
+		time.set(Calendar.SECOND, 0);
+		time.set(Calendar.MILLISECOND, 0);
+		alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), AlarmManager.INTERVAL_DAY, emailNote);
 	}
 	
-	public String getHistory() {
-		SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-		int budget = settings.getInt(DailyBudgetTrackerActivity.BUDGET, 2000);
-		int total = 0;
-		
-		StringBuffer history = new StringBuffer();
-
-		// create string of food and value for previous day's consumption
-		TrackingDatabase db_helper = new TrackingDatabase(getApplicationContext());
-		SQLiteDatabase db = db_helper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + "Track", null);  //TODO modify query
-        if (cursor.moveToFirst()) {
-            do {
-            	String name = cursor.getString(1);
-            	int value = Integer.parseInt(cursor.getString(2));
-            	total += value;
-				history.append(name + ", " + value + "\n");
-            } while (cursor.moveToNext());
-        }
-        db.close();
-		history.insert(0, "Yesterday, you consumed " + total + " out of " + budget + " calories.\n\nIt consisted of:\n");
-		return history.toString();
+	public void stopNotification() {
+		// Stops the daily notifications.
+		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		alarmMgr.cancel(emailNote);
 	}
 	
-	public void createNotification() {
-		String ns = Context.NOTIFICATION_SERVICE;
-		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-		
-		int icon = R.drawable.ic_launcher; //TODO change this icon lol
-		CharSequence contentTitle = "Daily Budget Tracker: Email notice";
-		long when = System.currentTimeMillis();
-
-		Notification notification = new Notification(icon, contentTitle, when);
-		notification.flags = Notification.FLAG_AUTO_CANCEL;
-		
-		Context context = getApplicationContext();
-		CharSequence contentText = "Yesterday's results are available.";
-		
-		//
-		SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-    	String email = settings.getString(DailyBudgetTrackerActivity.EMAIL, "");
-		Intent i = new Intent(Intent.ACTION_SEND);
-		i.setType("message/rfc822");
-		i.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
-		i.putExtra(Intent.EXTRA_SUBJECT, "[Daily Budget Tracker] Yesterday's calorie history:");
-		i.putExtra(Intent.EXTRA_TEXT, getHistory());
-		
-		//Intent notificationIntent = new Intent(this, SettingsActivity.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i, 0);
-
-		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-		
-		mNotificationManager.notify(NOTIFY_EMAIL, notification);
-	}
 }
