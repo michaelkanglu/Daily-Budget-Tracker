@@ -198,10 +198,5 @@ public class SettingsActivity extends Activity {
 		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		alarmMgr.cancel(emailNote);
 	}
-<<<<<<< HEAD
-    
+
 }
-=======
-    
-}
->>>>>>> email_export
