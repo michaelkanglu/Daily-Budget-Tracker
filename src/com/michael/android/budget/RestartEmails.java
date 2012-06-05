@@ -24,10 +24,10 @@ public class RestartEmails extends BroadcastReceiver {
 			
 			Calendar time = Calendar.getInstance();
 			time.setTimeInMillis(System.currentTimeMillis());
-			time.set(Calendar.HOUR_OF_DAY, 0);
-			time.set(Calendar.MINUTE, 0);
-			time.set(Calendar.SECOND,0);
-			time.set(Calendar.MILLISECOND,0);
+			time.set(Calendar.HOUR_OF_DAY, 23);
+			time.set(Calendar.MINUTE, 59);
+			time.set(Calendar.SECOND, 59);
+			time.set(Calendar.MILLISECOND, 999);
 			alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), AlarmManager.INTERVAL_DAY, SettingsActivity.emailNote);
 		}
 		

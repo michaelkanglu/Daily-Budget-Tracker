@@ -172,10 +172,10 @@ public class SettingsActivity extends Activity {
 		// When the settings activity is destroyed, save whatever is in the email field.
 		super.onDestroy();
 		String email = getEmail();
-    	SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(DailyBudgetTrackerActivity.EMAIL, email);
-        editor.commit();
+		SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString(DailyBudgetTrackerActivity.EMAIL, email);
+		editor.commit();
 	}
 	
 	public void scheduleNotification() {
@@ -186,10 +186,10 @@ public class SettingsActivity extends Activity {
 		
 		Calendar time = Calendar.getInstance();
 		time.setTimeInMillis(System.currentTimeMillis());
-		time.set(Calendar.HOUR_OF_DAY, 0);
-		time.set(Calendar.MINUTE, 0);
-		time.set(Calendar.SECOND, 0);
-		time.set(Calendar.MILLISECOND, 0);
+		time.set(Calendar.HOUR_OF_DAY, 23);
+		time.set(Calendar.MINUTE, 59);
+		time.set(Calendar.SECOND, 59);
+		time.set(Calendar.MILLISECOND, 999);
 		alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), AlarmManager.INTERVAL_DAY, emailNote);
 	}
 	
