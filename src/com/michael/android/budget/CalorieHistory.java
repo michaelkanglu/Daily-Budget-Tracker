@@ -32,6 +32,7 @@ public class CalorieHistory extends Activity {
 	private static final int BREAKFAST_BOUND = 5;
 	private static final int LUNCH_BOUND = 11;
 	private static final int DINNER_BOUND = 16;
+	private static final int MIDNIGHT_BOUND = 0;
 	
 	private TrackingDatabase db_helper;
 	private boolean displayToday = true;
@@ -42,6 +43,7 @@ public class CalorieHistory extends Activity {
     private boolean create_breakfast = true; //flag whether to create a new heading
     private boolean create_lunch = true; //flag whether to create a new heading
     private boolean create_dinner = true; //flag whether to create a new heading
+    private boolean create_midnight = true;
     
     private static class FoodRow extends TableRow{
     	private int myID;
@@ -197,9 +199,12 @@ public class CalorieHistory extends Activity {
 		} else if (withinTime(hour, LUNCH_BOUND, DINNER_BOUND) && create_lunch) {
 			tbl.addView(createHeading(tbl, "In the daytime:"));
 			create_lunch = false;
-		} else if (create_dinner) {
+		} else if (withinTime(hour, DINNER_BOUND, 24) && create_dinner) {
 			tbl.addView(createHeading(tbl, "In the evening:"));
 			create_dinner = false;
+		} else if (withinTime(hour, MIDNIGHT_BOUND, BREAKFAST_BOUND) && create_midnight) {
+			tbl.addView(createHeading(tbl, "Past midnight:"));
+			create_midnight = false;
 		}
 	}
 	
@@ -207,6 +212,7 @@ public class CalorieHistory extends Activity {
 		create_breakfast = true;
 		create_lunch = true;
 		create_dinner = true;
+		create_midnight = true;
 	}
 	
 	public boolean withinTime(int val, int start, int end) {
