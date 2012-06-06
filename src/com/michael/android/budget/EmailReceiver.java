@@ -28,7 +28,7 @@ public class EmailReceiver extends BroadcastReceiver {
 		// Create a notification in the top bar, so that the user knows that he/she can send the result email.
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(ns);
-		int icon = R.drawable.ic_launcher; //TODO change this icon lol
+		int icon = R.drawable.status; //TODO change this icon lol
 		CharSequence contentTitle = "Daily Budget Tracker: Email notice";
 		CharSequence contentText = "Yesterday's results are available.";
 		long when = System.currentTimeMillis();
