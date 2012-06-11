@@ -362,11 +362,11 @@ public class CalorieHistory extends Activity {
 		// Update the running budget
 		if(displayToday){
 			int diff = oValue - nValue;
-			SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
+			SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
 			SharedPreferences.Editor editor = settings.edit();
-			int runningBudget = settings.getInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, 2000);
+			int runningBudget = settings.getInt(DailyBudgetTracker.RUNNING_BUDGET, 2000);
 			runningBudget = runningBudget + diff;
-			editor.putInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, runningBudget);
+			editor.putInt(DailyBudgetTracker.RUNNING_BUDGET, runningBudget);
 			editor.commit();
 		}
 	
@@ -387,11 +387,11 @@ public class CalorieHistory extends Activity {
 		
 		// Update running budget
 		if(displayToday){
-			SharedPreferences settings = getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
+			SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
 			SharedPreferences.Editor editor = settings.edit();
-			int runningBudget = settings.getInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, 2000);
+			int runningBudget = settings.getInt(DailyBudgetTracker.RUNNING_BUDGET, 2000);
 			runningBudget = runningBudget + value;
-			editor.putInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, runningBudget);
+			editor.putInt(DailyBudgetTracker.RUNNING_BUDGET, runningBudget);
 			editor.commit();
 		}
 		

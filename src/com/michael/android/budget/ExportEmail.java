@@ -40,8 +40,8 @@ public class ExportEmail {
 	}
 		public Intent createEmail() {
 		// This intent creates the email with fields filled out.
-		SharedPreferences settings = mContext.getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-    	String email = settings.getString(DailyBudgetTrackerActivity.EMAIL, "");
+		SharedPreferences settings = mContext.getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
+    	String email = settings.getString(DailyBudgetTracker.EMAIL, "");
     	
 		Intent i = new Intent(Intent.ACTION_SEND);
 		i.setType("message/rfc822");
@@ -58,8 +58,8 @@ public class ExportEmail {
 	
 	public String getHistory() {
 		// Return the body of text for the result email.
-		SharedPreferences settings = mContext.getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-		int budget = settings.getInt(DailyBudgetTrackerActivity.BUDGET, 2000);
+		SharedPreferences settings = mContext.getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
+		int budget = settings.getInt(DailyBudgetTracker.BUDGET, 2000);
 		int total = 0;
 		StringBuffer history = new StringBuffer();
 

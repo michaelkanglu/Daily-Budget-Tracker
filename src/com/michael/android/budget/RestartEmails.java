@@ -20,7 +20,7 @@ public class RestartEmails extends BroadcastReceiver {
 		if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED") && sendEmails()) {
 			AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 			Intent i = new Intent(context, EmailReceiver.class);
-			SettingsActivity.emailNote = PendingIntent.getBroadcast(context, 0, i, 0);
+			Settings.emailNote = PendingIntent.getBroadcast(context, 0, i, 0);
 			
 			Calendar time = Calendar.getInstance();
 			time.setTimeInMillis(System.currentTimeMillis());
@@ -28,14 +28,14 @@ public class RestartEmails extends BroadcastReceiver {
 			time.set(Calendar.MINUTE, 59);
 			time.set(Calendar.SECOND, 59);
 			time.set(Calendar.MILLISECOND, 999);
-			alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), AlarmManager.INTERVAL_DAY, SettingsActivity.emailNote);
+			alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), AlarmManager.INTERVAL_DAY, Settings.emailNote);
 		}
 		
 	}
 	
 	public boolean sendEmails() {
-		SharedPreferences settings = mContext.getSharedPreferences(DailyBudgetTrackerActivity.PREFS_NAME, 0);
-    	return settings.getBoolean(DailyBudgetTrackerActivity.EXPORT, false);
+		SharedPreferences settings = mContext.getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
+    	return settings.getBoolean(DailyBudgetTracker.EXPORT, false);
 	}
 
 }
