@@ -208,7 +208,7 @@ public class DailyBudgetTrackerActivity extends Activity {
     		d_input = new Food(value);
     	}
     	else{
-    		d_input = new Food(food, value);
+    		d_input = new Food(food.trim(), value);
     	}
     	
     	//insert food into database

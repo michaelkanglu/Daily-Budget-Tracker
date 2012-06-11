@@ -183,14 +183,15 @@ public class SettingsActivity extends Activity {
 		// Schedule the notifications for everyday.
 		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(this, EmailReceiver.class);
+		intent.putExtra("resend", false);
 		emailNote = PendingIntent.getBroadcast(this, 0, intent, 0);
 		
 		Calendar time = Calendar.getInstance();
 		time.setTimeInMillis(System.currentTimeMillis());
-		time.set(Calendar.HOUR_OF_DAY, 23);
-		time.set(Calendar.MINUTE, 59);
-		time.set(Calendar.SECOND, 59);
-		time.set(Calendar.MILLISECOND, 999);
+		time.set(Calendar.HOUR_OF_DAY, 0);
+		time.set(Calendar.MINUTE, 0);
+		time.set(Calendar.SECOND, 0);
+		time.set(Calendar.MILLISECOND, 0);
 		alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), AlarmManager.INTERVAL_DAY, emailNote);
 	}
 	
@@ -200,4 +201,9 @@ public class SettingsActivity extends Activity {
 		alarmMgr.cancel(emailNote);
 	}
 
+	public void resendEmail(View view) {
+		ExportEmail em = new ExportEmail(this);
+		em.startChooser();
+	}
+	
 }
