@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -112,16 +113,18 @@ public class SettingsActivity extends Activity {
     			if( ((CheckBox) v).isChecked() ) {
     				if (email == null) {
     					// Checkbox checked but no email address. Does not send notifications.
-    					Toast no_email_msg = Toast.makeText(getApplicationContext(), "Please enter an email address.", Toast.LENGTH_SHORT);
-    					no_email_msg.show();
+    					String title = "Emails will not be sent";
+    					String message = "Please enter an email address in the field.";
+    					new AlertDialog.Builder(SettingsActivity.this).setTitle(title).setMessage(message).setNeutralButton("OK", null).show();
     					
     					check.setChecked(false);
     					storeExportSettings(null, false);
     				}
     				else {
     					// Checkbox checked and has an email address. Send email notifications.
-    					Toast email_msg = Toast.makeText(getApplicationContext(), "Emails will be sent.", Toast.LENGTH_SHORT);
-    					email_msg.show();
+    					String title = "Emails will be sent";
+    					String message = "Everyday a notification will prompt you for yesterday's results. The email will be populated, but you need to send it.";
+    					new AlertDialog.Builder(SettingsActivity.this).setTitle(title).setMessage(message).setNeutralButton("OK", null).show();
     					
 						// Update preferences for email export.
 				        storeExportSettings(email, true);
@@ -130,8 +133,9 @@ public class SettingsActivity extends Activity {
     			}
     			else {
     				// Stop sending notifications!
-					Toast stop = Toast.makeText(getApplicationContext(), "Emails will not be sent.", Toast.LENGTH_SHORT);
-					stop.show();
+    				String title = "Emails will not be sent";
+					String message = "Daily notifcations of results will end.";
+					new AlertDialog.Builder(SettingsActivity.this).setTitle(title).setMessage(message).setNeutralButton("OK", null).show();
 					
 					// Update preferences for email export.
 	    			storeExportSettings(email, false);
@@ -183,15 +187,16 @@ public class SettingsActivity extends Activity {
 		// Schedule the notifications for everyday.
 		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(this, EmailReceiver.class);
-		intent.putExtra("resend", false);
 		emailNote = PendingIntent.getBroadcast(this, 0, intent, 0);
 		
 		Calendar time = Calendar.getInstance();
 		time.setTimeInMillis(System.currentTimeMillis());
+		time.add(Calendar.DATE, 1);  // Add one day so that the notification does not show immediately.
 		time.set(Calendar.HOUR_OF_DAY, 0);
 		time.set(Calendar.MINUTE, 0);
 		time.set(Calendar.SECOND, 0);
 		time.set(Calendar.MILLISECOND, 0);
+		
 		alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), AlarmManager.INTERVAL_DAY, emailNote);
 	}
 	
@@ -202,6 +207,7 @@ public class SettingsActivity extends Activity {
 	}
 
 	public void resendEmail(View view) {
+		// Calls this method when you want to resend yesterday's results.
 		ExportEmail em = new ExportEmail(this);
 		em.startChooser();
 	}

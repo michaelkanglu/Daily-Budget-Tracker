@@ -4,77 +4,80 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="15sp" >
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:orientation="horizontal" >
     
+    <LinearLayout 
+	   	android:layout_width="fill_parent"
+	   	android:layout_height="wrap_content"
+	   	android:orientation="horizontal" >
+  
 		<EditText android:id="@+id/update_box" 
-        	android:layout_weight = "1"
+	       	android:layout_weight = "1"
 	    	android:layout_width="0dp" 
 	    	android:layout_height="wrap_content"
 	    	android:hint="@string/update_message"
 	    	android:inputType="number" />
 	
 		<Button 
-        	android:id="@+id/update_button"
+	       	android:id="@+id/update_button"
 	    	android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
 	    	android:text="@string/button_update"
 	    	android:onClick="newMasterBudget"	/>
-        </LinearLayout>
+		
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/s_budg_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/s_budg_disp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <Button
-            android:id="@+id/reset_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:onClick="resetApp"
-            android:text="@string/button_reset" />
-        <LinearLayout
-            android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation = "horizontal" >
-	        <CheckBox
-	            android:id="@+id/export_check"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content" 
-	            android:text="@string/export"
-	            android:paddingRight="10sp"/>
-	        <EditText 
-	            android:id="@+id/email"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content" 
-	            android:hint="@string/email"/>
-        </LinearLayout>
-        
-    <Button
-        android:id="@+id/resend"
-        android:layout_width="wrap_content"
+    <TextView
+	    android:id="@+id/s_budg_text"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/s_budg_disp"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+	<Button
+	    android:id="@+id/reset_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="left"
+	    android:onClick="resetApp"
+	    android:text="@string/button_reset" />
+	
+	<EditText 
+	    android:id="@+id/email"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" 
+	    android:hint="@string/email"/>
+	<LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/resend"
-        android:onClick="resendEmail" />
+        android:orientation = "horizontal" >
+	
+	    <Button
+			android:id="@+id/resend"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/resend"
+			android:onClick="resendEmail" /> 
+	  
+	    <CheckBox
+	        android:id="@+id/export_check"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:text="@string/export" />
+	    
+	</LinearLayout>
         <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:orientation = "horizontal" >
 
-		            <Button
-		                android:id="@+id/s_back_button"
-		                android:layout_width="0dp"
-		                android:layout_height="wrap_content"
-		                android:layout_gravity="bottom"
-		                android:layout_weight="1"
-		                android:onClick="goBack"
-		                android:text="@string/button_back" />
-
+		<Button
+		    android:id="@+id/s_back_button"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="bottom"
+		    android:layout_weight="1"
+		    android:onClick="goBack"
+		    android:text="@string/button_back" />
+		
     </LinearLayout>
     
 </LinearLayout>
