@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class TrackingDatabase extends SQLiteOpenHelper {
 	private static final String DB_NAME = "Track";
@@ -43,7 +42,6 @@ public class TrackingDatabase extends SQLiteOpenHelper {
 		cv.put(FOOD_CAL, fd.getValue());
 		cv.put(DATE_TIME, System.currentTimeMillis());
 		db.insert(DB_NAME, null, cv);
-		Log.i("insert", "name: " + fd.getName() + " cal: " + fd.getValue()); //TODO
 		db.close();
 	}
 	
@@ -59,7 +57,6 @@ public class TrackingDatabase extends SQLiteOpenHelper {
 	public void deleteTuple (int id) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete(DB_NAME, FOOD_ID+"=?", new String [] {""+id});
-		Log.i("delete", "id: " + id); //TODO
 		db.close();
 	}
 	
@@ -76,10 +73,6 @@ public class TrackingDatabase extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete(DB_NAME, DATE_TIME+"<?", new String [] {""+time});
         db.close();
-		
-		/*db.execSQL("DROP TABLE IF EXISTS " + DB_NAME);
-		onCreate(db);
-		db.close();*/
 	}
 	
 	public void resetDatabase () {

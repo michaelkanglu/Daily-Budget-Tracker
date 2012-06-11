@@ -30,6 +30,7 @@
 	
 	<string name="export">Notify me daily</string>	
 	<string name="email">Email address</string>
+	<string name="resend">Send yesterday\'s email</string>
 
     <string-array name="unit_array">
         <item>calories</item>
