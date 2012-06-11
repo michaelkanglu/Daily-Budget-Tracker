@@ -3,6 +3,7 @@ package com.michael.android.budget;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -20,7 +21,7 @@ public class DailyBudgetTrackerActivity extends Activity {
 	public static final String PREFS_NAME = "budgettracker.MyPrefsFile";
 	static final String RUNNING_BUDGET = "budgettracker.running_budget";
 	static final String BUDGET = "budgettracker.budget";
-	
+	static final String FIRST_USE = "budgettracker.firstuse";
 	static final String EMAIL = "budgettracker.email";
 	static final String EXPORT = "budgettracker.export";
 
@@ -28,17 +29,18 @@ public class DailyBudgetTrackerActivity extends Activity {
 	static final String LAST_MONTH = "budgettracker.lmonth";
 	static final String LAST_YEAR = "budgettracker.lyear";
 		
-		TextView mBudgetGoal;
-		EditText mInputBox;
-		Spinner mUnitSelect;
-		EditText mFoodInputBox;
+		private TextView mBudgetGoal;
+		private EditText mInputBox;
+		private Spinner mUnitSelect;
+		private EditText mFoodInputBox;
+		private boolean firstUse;
 		
 		int mBudget;
 		int mRunningBudget;
 		int oRunningBudget;
 		int step;
 		
-		int[] mUnitValues; //currently unused
+		int[] mUnitValues;
 		
 		//updated when app created and saved when app is destroyed
 		int mDay;
@@ -129,6 +131,7 @@ public class DailyBudgetTrackerActivity extends Activity {
       editor.putInt(LAST_MONTH, mMonth);
       editor.putInt(LAST_YEAR, mYear);
 
+      editor.putBoolean(FIRST_USE, firstUse);
       editor.commit();
     }
     
@@ -254,6 +257,18 @@ public class DailyBudgetTrackerActivity extends Activity {
     	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         mBudget = settings.getInt(BUDGET, 2000);
         mRunningBudget = settings.getInt(RUNNING_BUDGET, 2000);
+        firstUse = settings.getBoolean(FIRST_USE, true);
+        if(firstUse){
+        	String title = this.getResources().getString(R.string.first_use_title);
+        	String message = this.getResources().getString(R.string.first_use_content);
+        	
+        	new AlertDialog.Builder(this).setTitle(title).setMessage(message).setNeutralButton("OK", null).show();
+        	firstUse = false;
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(FIRST_USE, firstUse);
+            editor.commit();
+        }
+        
     }
     
     private void lockAllButtons(){

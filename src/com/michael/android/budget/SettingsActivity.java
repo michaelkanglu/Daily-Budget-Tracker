@@ -38,6 +38,7 @@ public class SettingsActivity extends Activity {
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(DailyBudgetTrackerActivity.RUNNING_BUDGET, runningBudget);
         editor.putInt(DailyBudgetTrackerActivity.BUDGET, budget);
+        editor.putBoolean(DailyBudgetTrackerActivity.FIRST_USE, true);
         editor.commit();
         
     	TrackingDatabase db_helper = new TrackingDatabase(getApplicationContext());

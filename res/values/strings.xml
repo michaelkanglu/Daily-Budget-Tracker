@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+	<string name="first_use_title">Welcome</string>
+    <string name="first_use_content">Stuff</string>
+	
     <string name="def">-1</string>
     <string name="app_name">DailyBudgetTracker</string>
     <string name="edit_message">I just had&#8230;</string>
