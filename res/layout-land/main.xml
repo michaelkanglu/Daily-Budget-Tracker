@@ -2,13 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:baselineAligned="false"
-    android:orientation="horizontal" >
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"
     android:orientation="vertical" >
 
 
@@ -19,10 +12,19 @@
         android:text="@string/def"
         android:gravity="center"
         android:textSize="64sp" />
+    
+    <ProgressBar
+        android:id="@+id/pBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
 
         <LinearLayout
             android:layout_width="0dp"
@@ -82,12 +84,11 @@
 
     </LinearLayout>
 
-	<Button
-	    android:id="@+id/input_button"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:onClick="inputValue"
-	    android:text="@string/button_send" />
-	</LinearLayout>
+    <Button
+        android:id="@+id/input_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="inputValue"
+        android:text="@string/button_send" />
     
 </LinearLayout>

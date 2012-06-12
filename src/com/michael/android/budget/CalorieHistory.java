@@ -440,9 +440,7 @@ public class CalorieHistory extends Activity {
 	
 	public void goBack(View view) {
 		// The Back Button
-		
 		finish();
 	}
 	
-
 }

@@ -9,9 +9,11 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Editable;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,11 +64,14 @@ public class DailyBudgetTracker extends Activity {
 			
 			oRunningBudget = oRunningBudget - step;
 			double ratio = ((double)oRunningBudget)/mBudget;
-			if(oRunningBudget > mRunningBudget){
+			if(oRunningBudget - step > mRunningBudget){
 				mBudgetGoal.setText(Integer.toString(oRunningBudget));
 				mBudgetGoal.setTextColor(getColor(ratio));
+				fillProgress(oRunningBudget);
 			}
 			else{
+				mBudgetGoal.setText(Integer.toString(mRunningBudget));
+				mBudgetGoal.setTextColor(getColor(ratio));
 				onFinish();
 			}
 		}
@@ -97,6 +102,8 @@ public class DailyBudgetTracker extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mUnitSelect.setAdapter(adapter);
         mUnitValues = getResources().getIntArray(R.array.unit_array);
+        
+        fillProgress(mRunningBudget);
       }
     
     //checks if any other activity has modified the budget information and refreshes
@@ -147,7 +154,12 @@ public class DailyBudgetTracker extends Activity {
     /*reads food information user inputs and updates database and budget appropriately**/
     public void inputValue(View view){
     	lockAllButtons();
-		int value = Integer.parseInt(mInputBox.getText().toString());
+    	Editable num = mInputBox.getText();
+    	if (num.length() == 0) {
+    		unlockAllButtons();
+    		return;
+    	}
+		int value = Integer.parseInt(num.toString());
     	String f_input = mFoodInputBox.getText().toString();
 
 
@@ -234,6 +246,7 @@ public class DailyBudgetTracker extends Activity {
     	mBudgetGoal.setTextColor(getColor(ratio));
     	mInputBox.setText(null);
     	mFoodInputBox.setText(null);
+    	fillProgress(mRunningBudget);
     }
     
     /**Updates the master date information to current time then compares to when the app was last used*/    
@@ -326,4 +339,16 @@ public class DailyBudgetTracker extends Activity {
     	}
     	return fColor;
     }
+    
+    public void fillProgress(int val) {
+    	// Fills the progress bar with updated count.
+/*        SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
+        int running = settings.getInt(DailyBudgetTracker.RUNNING_BUDGET, 0);
+        int budget = settings.getInt(DailyBudgetTracker.BUDGET, 2000);*/
+        
+    	ProgressBar pbar = (ProgressBar) findViewById(R.id.pBar);
+    	pbar.setMax(mBudget);
+    	pbar.setProgress(mBudget - val);
+    }
+    
 }
