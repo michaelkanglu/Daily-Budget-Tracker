@@ -169,6 +169,11 @@ public class DailyBudgetTracker extends Activity {
     	counter.start();
     }
     
+    public void openProfile(View view){
+    	Intent intent = new Intent(this, Profile.class);
+    	startActivity(intent);
+    }
+    
     public void openSettings(View view) {
     	Intent intent = new Intent(this, Settings.class);
     	startActivity(intent);
