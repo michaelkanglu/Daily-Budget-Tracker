@@ -36,7 +36,14 @@
 
 	<string name="p_recommend">is the daily recommended calorie budget for you</string>
 	<string name="p_submit_text">Set as my Daily Budget</string>
-	<string name="p_sex_caption">Gender</string>
+	<string name="p_sex_def">Female</string>
+	<string name="p_age_def">20 yrs.</string>
+	<string name="p_height_def">5ft. 8in.</string>
+	<string name="p_weight_def">130 lbs.</string>
+	<string name="p_weekly_caption">Desired Weight Change per Week</string>
+	<string name="p_weekly_def">Maintain Current Weight</string>
+	<string name="p_activity_caption">Amount of Physical Activity per Day</string>
+	<string name="p_activity_def">Sedentary</string>
 	
 	<string-array name="p_sex_input">
 	    <item>Male</item>

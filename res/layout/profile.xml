@@ -23,48 +23,91 @@
 
 	<Button 
 	    android:id="@+id/p_submit_button"
-	    android:layout_width="wrap_content"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:text="@string/p_submit_text"
-	    android:layout_gravity="center"/>
+	    android:layout_gravity="center"
+	    android:onClick="updateMasterBudget"/>
 
 	<LinearLayout
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content" >
+	    android:layout_height="wrap_content"
+	    android:paddingTop="25dp"
+	    android:gravity="center" >
 
-		<LinearLayout
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:orientation="vertical" 
-		    android:layout_weight="1">
-		    <TextView
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"
-        		android:text="@string/p_sex_caption" />
-		    <Spinner
-		        android:id="@+id/p_edittext1"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:entries="@array/p_sex_input"/>
-		    </LinearLayout>
-
-		<LinearLayout
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:orientation="vertical"
-		    android:layout_weight="1" >
-		    <TextView
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"
-        		android:text="@string/p_sex_caption" />
-		    <Spinner 
-		        android:id="@+id/p_edittext2"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"/>
-		</LinearLayout>
+			<Button 
+	    android:id="@+id/p_sex_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/p_sex_def"
+	    android:layout_gravity="center"
+	    android:minWidth="120dp"
+	    android:onClick="launchSexWindow"/>
+						<Button 
+	    android:id="@+id/p_age_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/p_age_def"
+	    android:layout_gravity="center"
+	    android:minWidth="120dp"
+	    android:onClick="launchAgeWindow"/>
 
 	</LinearLayout>
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" 
+	    android:gravity="center" >
 
+			<Button 
+	    android:id="@+id/p_height_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/p_height_def"
+	    android:layout_gravity="center"
+	    android:minWidth="120dp"
+	    android:onClick="launchHeightWindow"/>
+						<Button 
+	    android:id="@+id/p_weight_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/p_weight_def"
+	    android:layout_gravity="center"
+	    android:minWidth="120dp"
+	    android:onClick="launchWeightWindow"/>
+
+	</LinearLayout>
+	         <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/p_weekly_caption"
+        android:gravity="center"
+        android:textSize="12sp" 
+        android:paddingBottom="5dp"
+        android:paddingTop="10dp"/>
+
+	<Button 
+	    android:id="@+id/p_weekly_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/p_weekly_def"
+	    android:layout_gravity="center"
+	    android:onClick="launchWeeklyWindow"/>
+	     <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/p_activity_caption"
+        android:gravity="center"
+        android:textSize="12sp" 
+        android:paddingBottom="5dp"
+        android:paddingTop="10dp"/>
+
+	<Button 
+	    android:id="@+id/p_activity_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/p_activity_def"
+	    android:layout_gravity="center"
+	    android:onClick="launchActivityWindow"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
@@ -80,6 +123,6 @@
 		    android:text="@string/button_back" />
 		
     </LinearLayout>
-    
+
     
 </LinearLayout>
