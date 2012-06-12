@@ -57,12 +57,11 @@
             android:orientation="vertical" >
 
             <Button
-                android:id="@+id/m_main_button"
+                android:id="@+id/m_profile_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:enabled="false"
                 android:onClick="openMain"
-                android:text="@string/button_main" />
+                android:text="@string/button_profile" />
 
             <Button
                 android:id="@+id/m_history_button"

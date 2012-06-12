@@ -25,7 +25,8 @@
 	<Spinner
 	    android:id="@+id/unit_select"
 	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content" />
+	    android:layout_height="wrap_content"
+	    android:entries="@array/unit_array" />
 
 	<EditText
 	    android:id="@+id/food_input_box"
@@ -50,14 +51,13 @@
         android:orientation = "horizontal" >
 
 		    <Button
-		        android:id="@+id/m_main_button"
-		        android:enabled="false"
+		        android:id="@+id/m_profile_button"
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="bottom"
 		        android:layout_weight="1"
-		        android:onClick="openMain"
-		        android:text="@string/button_main" />
+		        android:onClick="openProfile"
+		        android:text="@string/button_profile" />
 
 		        <Button
 		            android:id="@+id/m_history_button"

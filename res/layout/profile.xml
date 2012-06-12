@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+
+
+    <TextView
+        android:id="@+id/budget_goal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/def"
+        android:gravity="center"
+        android:textSize="64sp" />
+     <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/p_recommend"
+        android:gravity="center"
+        android:textSize="12sp" 
+        android:paddingBottom="10dp"/>
+
+	<Button 
+	    android:id="@+id/p_submit_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/p_submit_text"
+	    android:layout_gravity="center"/>
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+
+		<LinearLayout
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical" 
+		    android:layout_weight="1">
+		    <TextView
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:text="@string/p_sex_caption" />
+		    <Spinner
+		        android:id="@+id/p_edittext1"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:entries="@array/p_sex_input"/>
+		    </LinearLayout>
+
+		<LinearLayout
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:layout_weight="1" >
+		    <TextView
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:text="@string/p_sex_caption" />
+		    <Spinner 
+		        android:id="@+id/p_edittext2"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"/>
+		</LinearLayout>
+
+	</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:orientation = "horizontal" >
+
+		<Button
+		    android:id="@+id/s_back_button"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="bottom"
+		    android:layout_weight="1"
+		    android:onClick="goBack"
+		    android:text="@string/button_back" />
+		
+    </LinearLayout>
+    
+    
+</LinearLayout>

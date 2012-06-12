@@ -89,14 +89,6 @@ public class DailyBudgetTracker extends Activity {
         if(isNewDay()){
         	resetData();
         }
-
-        //initialize all the information the widgets need to contain
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(	this, 
-        																		R.array.unit_array, 
-        																		android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mUnitSelect.setAdapter(adapter);
-        mUnitValues = getResources().getIntArray(R.array.unit_array);
       }
     
     //checks if any other activity has modified the budget information and refreshes
