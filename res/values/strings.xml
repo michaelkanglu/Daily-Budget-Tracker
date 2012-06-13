@@ -34,7 +34,7 @@
 	<string name="email">Email address</string>
 	<string name="resend">Send yesterday\'s results</string>
 
-	<string name="p_recommend">is the daily recommended calorie budget for you</string>
+	<string name="p_recommend">is your daily recommended calorie budget</string>
 	<string name="p_submit_text">Set as my Daily Budget</string>
 	<string name="p_custom_text">Use a Custom Budget</string>
 	<string name="p_sex_def">Female</string>
