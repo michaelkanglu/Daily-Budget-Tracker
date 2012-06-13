@@ -101,7 +101,7 @@ public class DailyBudgetTracker extends Activity {
         updateRunningBudget();
     }
     
-    //saves most up to date budget information for other activites to use
+    //saves most up to date budget information for other activities to use
     @Override
     protected void onPause(){
        super.onPause();
