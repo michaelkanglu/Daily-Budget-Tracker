@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="300dp"
+            android:minHeight="150dp"
+            android:background="@android:color/darker_gray"
+            android:orientation="vertical"
+            android:gravity="center" >
+            
+            <Button
+                android:id="@+id/p_female_select"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/p_female" />
+            
+            <Button 
+                android:id="@+id/p_male_select"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/p_male"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"/>
+</LinearLayout>

@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -70,8 +69,6 @@ public class DailyBudgetTracker extends Activity {
 				fillProgress(oRunningBudget);
 			}
 			else{
-				mBudgetGoal.setText(Integer.toString(mRunningBudget));
-				mBudgetGoal.setTextColor(getColor(ratio));
 				onFinish();
 			}
 		}
@@ -89,14 +86,6 @@ public class DailyBudgetTracker extends Activity {
         mInputBox = (EditText)findViewById(R.id.input_box);
         mFoodInputBox = (EditText)findViewById(R.id.food_input_box);
         db_helper = new TrackingDatabase(getApplicationContext());
-        
-        //initialize all the information the widgets need to contain
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(	this, 
-        																		R.array.unit_array, 
-        																		android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mUnitSelect.setAdapter(adapter);
-        mUnitValues = getResources().getIntArray(R.array.unit_array);
         
         fillProgress(mRunningBudget);
       }
@@ -183,6 +172,11 @@ public class DailyBudgetTracker extends Activity {
     	}
     	BudgetCounter counter = new BudgetCounter(1200,60);
     	counter.start();
+    }
+    
+    public void openProfile(View view){
+    	Intent intent = new Intent(this, Profile.class);
+    	startActivity(intent);
     }
     
     public void openSettings(View view) {

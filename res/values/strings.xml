@@ -16,10 +16,10 @@
 	<string name="s_budg_disp">Current budget: </string>
 	<string name="button_reset">Reset App</string>
 	
-	<string name="button_main">Main</string>
+	<string name="button_profile">Profile</string>
 	<string name="button_history">History</string>
 	<string name="button_settings">Settings</string>
-	<string name ="button_back">Back</string>
+	<string name="button_back">Back</string>
 	
 	<string name="title">Today you ate:</string>
     <string name="row_edit">Edit</string>
@@ -34,6 +34,49 @@
 	<string name="email">Email address</string>
 	<string name="resend">Send yesterday\'s results</string>
 
+	<string name="p_recommend">is the daily recommended calorie budget for you</string>
+	<string name="p_submit_text">Set as my Daily Budget</string>
+	<string name="p_custom_text">Use a Custom Budget</string>
+	<string name="p_sex_def">Female</string>
+	<string name="p_age_def">20 yrs.</string>
+	<string name="p_height_def">5ft. 8in.</string>
+	<string name="p_weight_def">130 lbs.</string>
+	<string name="p_weekly_caption">Desired Weight Change per Week</string>
+	<string name="p_weekly_def">Maintain Current Weight</string>
+	<string name="p_activity_caption">Amount of Physical Activity per Day</string>
+	<string name="p_activity_def">Sedentary</string>
+	
+	<string name="p_male">Male</string>
+	<string name="p_female">Female</string>
+	
+	<string name="p_age_unit"> yrs</string>
+	
+	<string name="p_height1_unit_im"> ft </string>
+	<string name="p_height2_unit_im"> in </string>
+	<string name="p_height1_unit_si"> . </string>
+	<string name="p_height2_unit_si"> m </string>	
+	<string name="p_unit_toggle_text">in/cm</string>
+	
+	<string name="p_weight_unit_im">lbs</string>
+	<string name="p_weight_unit_si">kg</string>
+	<string name="p_weight_toggle_text">lb/kg</string>
+	
+	<string-array name="p_weekly_array">
+	    <item>Moderate Weight Gain (1 lb/week)</item>
+	    <item>Gradual Weight Gain (0.5 lb/week)</item>
+	    <item>Maintain Current Weight</item>
+	    <item>Gradual Weight Loss (0.5 lb/week)</item>
+	    <item>Moderate Weight Gain (1 lb/week)</item>    
+	</string-array>
+	
+	<string-array name="p_activity_array">
+	    <item>Extra Active</item>
+	    <item>Very Active</item>
+	    <item>Active</item>
+	    <item>Slightly Active</item>
+	    <item>Sedentary</item>
+	</string-array>
+	
     <string-array name="unit_array">
         <item>calories</item>
         <item>g of sugar</item>
