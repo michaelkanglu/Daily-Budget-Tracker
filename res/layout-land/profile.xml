@@ -23,7 +23,7 @@
         android:paddingBottom="10dp"/>
 
      <LinearLayout
-         android:layout_width="300dp"
+         android:layout_width="375dp"
          android:layout_height="wrap_content"
          android:layout_gravity="center"
          android:orientation="horizontal" >	
@@ -31,7 +31,7 @@
 	    android:id="@+id/p_submit_button"
 	    android:layout_width="0dp"
 	    android:layout_height="wrap_content"
-	    android:layout_weight="1"
+	    android:layout_weight="2"
 	    android:text="@string/p_submit_text"
 	    android:layout_gravity="center"
 	    android:onClick="updateMasterBudget"
@@ -41,20 +41,28 @@
 	    android:id="@+id/p_custom_button"
 	    android:layout_width="0dp"
 	    android:layout_height="wrap_content"
-	    android:layout_weight="1"
+	    android:layout_weight="2"
 	    android:text="@string/p_custom_text"
 	    android:layout_gravity="center"
 	    android:onClick="openSettings"
 	    android:textSize="12sp"
 	    android:minWidth="150dp" />
+
+	    <Button
+	        android:id="@+id/s_back_button"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:onClick="goBack"
+	        android:text="@string/button_back" />
+
      </LinearLayout>
 
 
 	<LinearLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:paddingTop="25dp"
-	    android:gravity="center" >
+	    android:paddingTop="25dp" >
 
 			<Button 
 	    android:id="@+id/p_sex_button"
@@ -64,6 +72,7 @@
 	    android:layout_gravity="center"
 	    android:minWidth="120dp"
 	    android:onClick="launchSexWindow"/>
+
 						<Button 
 	    android:id="@+id/p_age_button"
 	    android:layout_width="wrap_content"
@@ -73,11 +82,19 @@
 	    android:minWidth="120dp"
 	    android:onClick="launchAgeWindow"/>
 
+						<Spinner
+						    android:id="@+id/p_weekly_spinner"
+						    android:layout_width="0dp"
+						    android:layout_height="wrap_content"
+						    android:layout_weight="1"
+						    android:entries="@array/p_weekly_array"
+						    android:prompt="@string/p_weekly_caption" />
+
 	</LinearLayout>
+
 	<LinearLayout
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content" 
-	    android:gravity="center" >
+	    android:layout_height="wrap_content">
 
 			<Button 
 	    android:id="@+id/p_height_button"
@@ -96,52 +113,13 @@
 	    android:minWidth="120dp"
 	    android:onClick="launchWeightWindow"/>
 
-	</LinearLayout>
-	         <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/p_weekly_caption"
-        android:gravity="center"
-        android:textSize="12sp" 
-        android:paddingBottom="5dp"
-        android:paddingTop="10dp"/>
+						<Spinner
+						    android:id="@+id/p_activity_spinner"
+						    android:layout_width="0dp"
+						    android:layout_height="wrap_content"
+						    android:layout_weight="1"
+						    android:entries="@array/p_activity_array"
+						    android:prompt="@string/p_activity_caption" />
 
-	<Spinner
-	    android:id="@+id/p_weekly_spinner"
-	    android:layout_width="300dp"
-	    android:layout_height="wrap_content"
-	    android:entries="@array/p_weekly_array"
-	    android:layout_gravity="center" />
-	     <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/p_activity_caption"
-        android:gravity="center"
-        android:textSize="12sp" 
-        android:paddingBottom="5dp"
-        android:paddingTop="10dp"/>
-
-	<Spinner
-	    android:id="@+id/p_activity_spinner"
-	    android:layout_width="300dp"
-	    android:layout_height="wrap_content"
-	    android:entries="@array/p_activity_array"
-	    android:layout_gravity="center" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:orientation = "horizontal" >
-
-		<Button
-		    android:id="@+id/s_back_button"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_gravity="bottom"
-		    android:layout_weight="1"
-		    android:onClick="goBack"
-		    android:text="@string/button_back" />
-		
-    </LinearLayout>
-
-    
+	</LinearLayout>   
 </LinearLayout>
