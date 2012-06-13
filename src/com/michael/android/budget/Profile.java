@@ -178,6 +178,8 @@ public class Profile extends Activity {
 	    
 	    final EditText ageInputBox = (EditText)popupView.findViewById(R.id.p_age_input_box);
 	    ageInputBox.setText(Integer.toString((int)mAge));
+	    // Place focus at the end of the edit text, rather than the beginning.
+	 	ageInputBox.setSelection(ageInputBox.getText().length());
 	    
 	    centerPopupWindow(popupView, popupWindow);
 	    
@@ -217,6 +219,9 @@ public class Profile extends Activity {
 	    
 	    final EditText weightInputBox = (EditText)popupView.findViewById(R.id.p_weight_input_box);
 	    weightInputBox.setText(Integer.toString((int)mWeight));
+	    // Place focus at the end of the edit text, rather than the beginning.
+	 	weightInputBox.setSelection(weightInputBox.getText().length());
+	 	
 	    final TextView weightCaption = (TextView)popupView.findViewById(R.id.p_weight_caption);
 	    if(unitPounds){
 	    	weightCaption.setText(this.getResources().getString(R.string.p_weight_unit_im));
@@ -255,6 +260,9 @@ public class Profile extends Activity {
 			    }
 			    
 		    	weightInputBox.setText(Integer.toString(weight));
+		    	// Place focus at the end of the edit text, rather than the beginning.
+			 	weightInputBox.setSelection(weightInputBox.getText().length());
+			 	
 		    	setWeightText((int)mWeight);
 			}
 		});
@@ -308,7 +316,10 @@ public class Profile extends Activity {
 	    	firstInputBox.setText(Integer.toString((int)mHeight/100));
 	    	secondInputBox.setText(Integer.toString((int)mHeight%100));
 	    }
-	    
+	    // Place focus at the end of the edit text, rather than the beginning.
+	 	firstInputBox.setSelection(firstInputBox.getText().length());
+	 	secondInputBox.setSelection(secondInputBox.getText().length());
+	 	
 	    centerPopupWindow(popupView, popupWindow);
 	    
 		popupWindow.setFocusable(true);
@@ -357,10 +368,13 @@ public class Profile extends Activity {
 			    	firstInputBox.setText(Integer.toString(height/100));
 			    	secondInputBox.setText(Integer.toString(height%100));
 			    }
+				// Place focus at the end of the edit text, rather than the beginning.
+			 	firstInputBox.setSelection(firstInputBox.getText().length());
+			 	secondInputBox.setSelection(secondInputBox.getText().length());
+			 	
 			    setHeightText((int)mHeight);
 			}
-		});
-		
+		});		
 	    Button btnSubmitHeight = (Button)popupView.findViewById(R.id.p_submit_height);
 	    btnSubmitHeight.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {

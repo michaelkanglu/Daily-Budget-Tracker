@@ -289,6 +289,10 @@ public class CalorieHistory extends Activity {
 		foodInputBox.setText(oFood);
 		valueInputBox.setText(""+oValue);
 		
+		// Place focus at the end of the edit text, rather than the beginning.
+		foodInputBox.setSelection(foodInputBox.getText().length());
+		valueInputBox.setSelection(valueInputBox.getText().length());
+		
 		// Determine if there's room at the bottom
 		if(hasBottomMenuSpace(popupView)){
 			popupWindow.showAsDropDown(sRow, 50, -5);
