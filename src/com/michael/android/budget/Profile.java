@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class Profile extends Activity {
 	
@@ -27,9 +30,9 @@ public class Profile extends Activity {
 	boolean unitInches;
 	boolean unitPounds;
 	boolean mGender;
-	int mAge;
-	int mHeight;
-	int mWeight;
+	float mAge;
+	float mHeight;
+	float mWeight;
 	int weeklyIndex;
 	int activiIndex;
 	
@@ -58,31 +61,21 @@ public class Profile extends Activity {
 		saveButtonInfo();
 	}
 	
-	private void launchSexWindow(View view){
-		LayoutInflater layoutInflater  =
-				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
-	    final View popupView = 
-	    		layoutInflater.inflate(R.layout.pro_gender_popup, null);  
-	    final PopupWindow popupWindow = new PopupWindow(popupView, 
-	            										LayoutParams.WRAP_CONTENT,  
-	            										LayoutParams.WRAP_CONTENT);
-	}
-	
 	public void restoreButtonInfo(){
 		SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
 		unitInches = settings.getBoolean(HEIGHT_METR, true);
 		unitPounds = settings.getBoolean(WEIGHT_METR, true);
-		mGender = settings.getBoolean(SEX_PROF, false);
-		mAge = settings.getInt(AGE_PROF, 30);
-		mHeight = settings.getInt(HEIGHT_PROF, 68);
-		mWeight = settings.getInt(WEIGHT_METR, 130);
+		mGender = settings.getBoolean(SEX_PROF, true);
+		mAge = settings.getFloat(AGE_PROF, 30f);
+		mHeight = settings.getFloat(HEIGHT_PROF, 65f);
+		mWeight = settings.getFloat(WEIGHT_PROF, 120f);
 		weeklyIndex = settings.getInt(WEEKLY_PROF, 2);
 		activiIndex = settings.getInt(ACTIVI_PROF, 3);
 		
 		setSexText(mGender);
-		setAgeText(mAge);
-		setHeightText(mHeight);
-		setWeightText(mWeight);
+		setAgeText((int)mAge);
+		setHeightText((int)mHeight);
+		setWeightText((int)mWeight);
 		setWeeklyItem(weeklyIndex);
 		setActivityItem(activiIndex);
 	}
@@ -94,26 +87,305 @@ public class Profile extends Activity {
 		editor.putBoolean(HEIGHT_METR, unitInches);
 		editor.putBoolean(WEIGHT_METR, unitPounds);
 		editor.putBoolean(SEX_PROF, mGender);
-		editor.putInt(AGE_PROF, mAge);
-		editor.putInt(HEIGHT_PROF, mHeight);
-		editor.putInt(WEIGHT_METR, mWeight);
+		editor.putFloat(AGE_PROF, mAge);
+		editor.putFloat(HEIGHT_PROF, mHeight);
+		editor.putFloat(WEIGHT_PROF, mWeight);
 		editor.putInt(WEEKLY_PROF, weeklyIndex);
 		editor.putInt(ACTIVI_PROF, activiIndex);
 		
 		editor.commit();
 	}
 	
+	public void launchSexWindow(View view){
+		LayoutInflater layoutInflater  =
+				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
+	    final View popupView = 
+	    		layoutInflater.inflate(R.layout.pro_gender_popup, null);  
+	    final PopupWindow popupWindow = new PopupWindow(popupView, 
+	            										LayoutParams.WRAP_CONTENT,  
+	            										LayoutParams.WRAP_CONTENT);
+	    
+	    centerPopupWindow(popupView, popupWindow);
+	    
+		popupWindow.setFocusable(true);
+		popupWindow.update();
+		
+	    Button btnFemale = (Button)popupView.findViewById(R.id.p_female_select);
+	    btnFemale.setOnClickListener(new View.OnClickListener(){
+	    	public void onClick(View v) {
+	    		mGender = true;
+	    		setSexText(mGender);
+	    		updateRecommendation();
+	    		popupWindow.dismiss();
+	    		
+	    	}
+	    });
+	    
+	    // When cancel button clicked
+	    Button btnMale = (Button)popupView.findViewById(R.id.p_male_select);
+	    btnMale.setOnClickListener(new View.OnClickListener(){
+	    	public void onClick(View v) {
+	    		mGender = false;
+	    		setSexText(mGender);
+	    		updateRecommendation();
+	    		popupWindow.dismiss();
+	    	}
+	    });
+	}
+	
+	public void launchAgeWindow(View view){
+		LayoutInflater layoutInflater  =
+				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
+	    final View popupView = 
+	    		layoutInflater.inflate(R.layout.pro_age_popup, null);  
+	    final PopupWindow popupWindow = new PopupWindow(popupView, 
+	            										LayoutParams.WRAP_CONTENT,  
+	            										LayoutParams.WRAP_CONTENT);
+	    
+	    final EditText ageInputBox = (EditText)popupView.findViewById(R.id.p_age_input_box);
+	    ageInputBox.setText(Integer.toString((int)mAge));
+	    
+	    centerPopupWindow(popupView, popupWindow);
+	    
+		popupWindow.setFocusable(true);
+		popupWindow.update();
+		
+	    Button btnSubmitAge = (Button)popupView.findViewById(R.id.p_submit_age);
+	    btnSubmitAge.setOnClickListener(new View.OnClickListener(){
+	    	public void onClick(View v) {
+	    		if(ageInputBox.getText().length()==0){
+	    			return;
+	    		}
+	    		mAge = Integer.parseInt(ageInputBox.getText().toString());
+	    		setAgeText((int)mAge);
+	    		updateRecommendation();
+	    		popupWindow.dismiss();
+	    	}
+	    });
+	    
+	    // When cancel button clicked
+	    Button btnCancelAge = (Button)popupView.findViewById(R.id.p_cancel_age);
+	    btnCancelAge.setOnClickListener(new View.OnClickListener(){
+	    	public void onClick(View v) {
+	    		popupWindow.dismiss();
+	    	}
+	    });
+	}
+	
+	public void launchWeightWindow(View view){
+		LayoutInflater layoutInflater  =
+				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
+	    final View popupView = 
+	    		layoutInflater.inflate(R.layout.pro_weight_popup, null);  
+	    final PopupWindow popupWindow = new PopupWindow(popupView, 
+	            										LayoutParams.WRAP_CONTENT,  
+	            										LayoutParams.WRAP_CONTENT);
+	    
+	    final EditText weightInputBox = (EditText)popupView.findViewById(R.id.p_weight_input_box);
+	    weightInputBox.setText(Integer.toString((int)mWeight));
+	    final TextView weightCaption = (TextView)popupView.findViewById(R.id.p_weight_caption);
+	    if(unitPounds){
+	    	weightCaption.setText(this.getResources().getString(R.string.p_weight_unit_im));
+	    }
+	    else{
+	    	weightCaption.setText(this.getResources().getString(R.string.p_weight_unit_si));
+	    }
+	    
+	    centerPopupWindow(popupView, popupWindow);
+	    
+		popupWindow.setFocusable(true);
+		popupWindow.update();
+		
+		Button btnToggleUnit = (Button)popupView.findViewById(R.id.p_weight_toggle);
+		btnToggleUnit.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				unitPounds = !unitPounds;
+				
+				int weight = 0;
+				if(weightInputBox.getText().length()!=0){
+					weight = Integer.parseInt(weightInputBox.getText().toString());
+				}
+				
+			    if(unitPounds){
+			    	weightCaption.setText(v.getResources().getString(R.string.p_weight_unit_im));
+			    	mWeight = mWeight * 2.2f;
+
+			    	weight = (int)(weight * 2.2);
+			    }
+			    else{
+			    	weightCaption.setText(v.getResources().getString(R.string.p_weight_unit_si));
+			    	mWeight = mWeight / 2.2f;
+
+			    	weight = (int)(weight / 2.2);
+			    }
+			    
+		    	weightInputBox.setText(Integer.toString(weight));
+		    	setWeightText((int)mWeight);
+			}
+		});
+		
+	    Button btnSubmitWeight = (Button)popupView.findViewById(R.id.p_submit_weight);
+	    btnSubmitWeight.setOnClickListener(new View.OnClickListener(){
+	    	public void onClick(View v) {
+	    		if(weightInputBox.getText().length()==0){
+	    			return;
+	    		}
+	    		mWeight = Integer.parseInt(weightInputBox.getText().toString());
+	    		setWeightText((int)mWeight);
+	    		updateRecommendation();
+	    		popupWindow.dismiss();
+	    	}
+	    });
+	    
+	    // When cancel button clicked
+	    Button btnCancelWeight = (Button)popupView.findViewById(R.id.p_cancel_weight);
+	    btnCancelWeight.setOnClickListener(new View.OnClickListener(){
+	    	public void onClick(View v) {
+	    		popupWindow.dismiss();
+	    	}
+	    });
+	}
+	
+	public void launchHeightWindow(View view){
+		LayoutInflater layoutInflater  =
+				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
+	    final View popupView = 
+	    		layoutInflater.inflate(R.layout.pro_height_popup, null);  
+	    final PopupWindow popupWindow = new PopupWindow(popupView, 
+	            										LayoutParams.WRAP_CONTENT,  
+	            										LayoutParams.WRAP_CONTENT);
+	    
+	    final EditText firstInputBox = (EditText)popupView.findViewById(R.id.p_first_input_box);
+	    final EditText secondInputBox = (EditText)popupView.findViewById(R.id.p_second_input_box);
+	    
+	    
+	    final TextView firstCaption = (TextView)popupView.findViewById(R.id.p_first_caption);
+	    final TextView secondCaption = (TextView)popupView.findViewById(R.id.p_second_caption);
+	    if(unitInches){
+	    	firstCaption.setText(this.getResources().getString(R.string.p_height1_unit_im));
+	    	secondCaption.setText(this.getResources().getString(R.string.p_height2_unit_im));
+	    	firstInputBox.setText(Integer.toString((int)mHeight/12));
+	    	secondInputBox.setText(Integer.toString((int)mHeight%12));
+	    }
+	    else{
+	    	firstCaption.setText(this.getResources().getString(R.string.p_height1_unit_si));
+	    	secondCaption.setText(this.getResources().getString(R.string.p_height2_unit_si));
+	    	firstInputBox.setText(Integer.toString((int)mHeight/100));
+	    	secondInputBox.setText(Integer.toString((int)mHeight%100));
+	    }
+	    
+	    centerPopupWindow(popupView, popupWindow);
+	    
+		popupWindow.setFocusable(true);
+		popupWindow.update();
+		
+		Button btnToggleUnit = (Button)popupView.findViewById(R.id.p_height_toggle);
+		btnToggleUnit.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				unitInches = !unitInches;
+				
+				int height = 0;
+				
+			    if(unitInches){
+			    	firstCaption.setText(v.getResources().getString(R.string.p_height1_unit_im));
+			    	secondCaption.setText(v.getResources().getString(R.string.p_height2_unit_im));
+			    	
+			    	mHeight = mHeight / 2.54f;
+			    	
+			    	if(firstInputBox.getText().length()!=0){
+			    		height = height + (Integer.parseInt(firstInputBox.getText().toString()) * 100);
+			    	}
+			    	
+			    	if(secondInputBox.getText().length()!=0){
+			    		height = height + Integer.parseInt(secondInputBox.getText().toString());
+			    	}
+			    	height = (int)(height / 2.54);
+			    	firstInputBox.setText(Integer.toString(height/12));
+			    	secondInputBox.setText(Integer.toString(height%12));
+			    }
+			    else{
+			    	firstCaption.setText(v.getResources().getString(R.string.p_height1_unit_si));
+			    	secondCaption.setText(v.getResources().getString(R.string.p_height2_unit_si));
+			    	
+			    	mHeight = mHeight * 2.54f;
+			    	
+			    	if(firstInputBox.getText().length()!=0){
+			    		height = height + (Integer.parseInt(firstInputBox.getText().toString()) * 12);
+			    	}
+			    	
+			    	if(secondInputBox.getText().length()!=0){
+			    		height = height + Integer.parseInt(secondInputBox.getText().toString());
+			    	}
+			    	height = (int)(height * 2.54);
+			    	
+			    	firstInputBox.setText(Integer.toString(height/100));
+			    	secondInputBox.setText(Integer.toString(height%100));
+			    }
+			    setHeightText((int)mHeight);
+			}
+		});
+		
+	    Button btnSubmitHeight = (Button)popupView.findViewById(R.id.p_submit_height);
+	    btnSubmitHeight.setOnClickListener(new View.OnClickListener(){
+	    	public void onClick(View v) {
+	    		int height = 0;
+			    if(unitInches){
+			    	if(firstInputBox.getText().length()!=0){
+			    		height = height + (Integer.parseInt(firstInputBox.getText().toString()) * 12);
+			    	}
+			    	
+			    	if(secondInputBox.getText().length()!=0){
+			    		height = height + Integer.parseInt(secondInputBox.getText().toString());
+			    	}
+			    }
+			    else{
+			    	if(firstInputBox.getText().length()!=0){
+			    		height = height + (Integer.parseInt(firstInputBox.getText().toString()) * 100);
+			    	}
+			    	
+			    	if(secondInputBox.getText().length()!=0){
+			    		height = height + Integer.parseInt(secondInputBox.getText().toString());
+			    	}
+			    }
+		    	if(height == 0){
+		    		return;
+		    	}
+		    	mHeight = height;
+		    	setHeightText((int)mHeight);
+	    		updateRecommendation();
+	    		popupWindow.dismiss();
+	    	}
+	    });
+	    
+	    // When cancel button clicked
+	    Button btnCancelHeight = (Button)popupView.findViewById(R.id.p_cancel_height);
+	    btnCancelHeight.setOnClickListener(new View.OnClickListener(){
+	    	public void onClick(View v) {
+	    		popupWindow.dismiss();
+	    	}
+	    });
+	}
+	
+	private void centerPopupWindow(View popupView, PopupWindow popupWindow){
+		popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+		View parent = findViewById(R.id.p_activity_spinner).getRootView();
+		
+		popupWindow.showAtLocation(parent, Gravity.TOP, 0, 60);
+	}
+	
 	public void setSexText(Boolean sex){
 		Button button = (Button)findViewById(R.id.p_sex_button);
 		if(sex)
-			button.setText("Male");
-		else
 			button.setText("Female");
+		else
+			button.setText("Male");
 	}
 	
 	public void setAgeText(int age){
 		Button button = (Button)findViewById(R.id.p_age_button);
-		button.setText(Integer.toString(age));
+		button.setText(Integer.toString(age) + "yrs");
 	}
 	
 	public void setHeightText(int height){
@@ -126,8 +398,12 @@ public class Profile extends Activity {
 			text.append("in");
 		}
 		else{
-			text.append(height);
-			text.append("cm");
+			text.append(height/100);
+			if((height%100)<10){
+				text.append(0);
+			}
+			text.append(height%100);
+			text.append("m");
 		}
 		button.setText(text.toString());
 	}
@@ -153,6 +429,11 @@ public class Profile extends Activity {
 	public void setActivityItem(int index){
 		Spinner spinner = (Spinner)findViewById(R.id.p_activity_spinner);
 		spinner.setSelection(index);
+	}
+	
+	//TODO: Actually write the math formula
+	public void updateRecommendation(){
+		
 	}
 	
     public void openSettings(View view) {
