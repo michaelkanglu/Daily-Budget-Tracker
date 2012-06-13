@@ -17,7 +17,8 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:paddingBottom="2dp" />
 
     <EditText
         android:id="@+id/input_box"
@@ -55,32 +56,32 @@
         android:layout_height="fill_parent"
         android:orientation = "horizontal" >
 
-		    <Button
-		        android:id="@+id/m_profile_button"
-		        android:layout_width="0dp"
-		        android:layout_height="wrap_content"
-		        android:layout_gravity="bottom"
-		        android:layout_weight="1"
-		        android:onClick="openProfile"
-		        android:text="@string/button_profile" />
+		<Button
+		    android:id="@+id/m_profile_button"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="bottom"
+		    android:layout_weight="1"
+		    android:onClick="openProfile"
+		    android:text="@string/button_profile" />
 
-		        <Button
-		            android:id="@+id/m_history_button"
-		            android:layout_width="0dp"
-		            android:layout_height="wrap_content"
-		            android:layout_gravity="bottom"
-		            android:layout_weight="1"
-		            android:onClick="openHistory"
-		            android:text="@string/button_history" />
+		<Button
+		    android:id="@+id/m_history_button"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="bottom"
+		    android:layout_weight="1"
+		    android:onClick="openHistory"
+		    android:text="@string/button_history" />
 
-		            <Button
-		                android:id="@+id/m_settings_button"
-		                android:layout_width="0dp"
-		                android:layout_height="wrap_content"
-		                android:layout_gravity="bottom"
-		                android:layout_weight="1"
-		                android:onClick="openSettings"
-		                android:text="@string/button_settings" />
+		<Button
+		    android:id="@+id/m_settings_button"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="bottom"
+		    android:layout_weight="1"
+		    android:onClick="openSettings"
+		    android:text="@string/button_settings" />
 
     </LinearLayout>
     
