@@ -120,7 +120,7 @@ public class DailyBudgetTracker extends Activity {
     protected void onPause(){
        super.onPause();
        
-      storeData();
+       storeData();
     }  
     
     //saves most up to date information and the date app was last OPENED
@@ -342,13 +342,13 @@ public class DailyBudgetTracker extends Activity {
     
     public void fillProgress(int val) {
     	// Fills the progress bar with updated count.
-/*        SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
-        int running = settings.getInt(DailyBudgetTracker.RUNNING_BUDGET, 0);
-        int budget = settings.getInt(DailyBudgetTracker.BUDGET, 2000);*/
+        SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
+        int budget = settings.getInt(DailyBudgetTracker.BUDGET, 2000);
         
     	ProgressBar pbar = (ProgressBar) findViewById(R.id.pBar);
-    	pbar.setMax(mBudget);
-    	pbar.setProgress(mBudget - val);
+    	pbar.setMax(budget);
+    	pbar.setProgress(0); // Needed due to bug in android. yes, really.
+    	pbar.setProgress(budget - val);
     }
     
 }
