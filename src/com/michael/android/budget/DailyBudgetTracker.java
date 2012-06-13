@@ -90,11 +90,6 @@ public class DailyBudgetTracker extends Activity {
         mFoodInputBox = (EditText)findViewById(R.id.food_input_box);
         db_helper = new TrackingDatabase(getApplicationContext());
         
-        //checks if it's a newday (this updates the last day opened information)
-        if(isNewDay()){
-        	resetData();
-        }
-
         //initialize all the information the widgets need to contain
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(	this, 
         																		R.array.unit_array, 
@@ -110,6 +105,11 @@ public class DailyBudgetTracker extends Activity {
     @Override
     public void onResume(){
     	super.onResume();
+        
+    	//checks if it's a newday (this updates the last day opened information)
+        if(isNewDay()){
+        	resetData();
+        }
     	
         restoreBudgetInfo(); 
         updateRunningBudget();
@@ -134,9 +134,9 @@ public class DailyBudgetTracker extends Activity {
       editor.putInt(RUNNING_BUDGET, mRunningBudget);
       editor.putInt(BUDGET, mBudget);
       
-      editor.putInt(LAST_DAY, mDay);
+      /*editor.putInt(LAST_DAY, mDay);
       editor.putInt(LAST_MONTH, mMonth);
-      editor.putInt(LAST_YEAR, mYear);
+      editor.putInt(LAST_YEAR, mYear);*/
 
       editor.putBoolean(FIRST_USE, firstUse);
       editor.commit();
@@ -253,6 +253,7 @@ public class DailyBudgetTracker extends Activity {
     private boolean isNewDay(){
         Calendar today = Calendar.getInstance();
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
         
         mDay = today.get(Calendar.DATE);
         mMonth = today.get(Calendar.MONTH);
@@ -262,6 +263,11 @@ public class DailyBudgetTracker extends Activity {
         int lastMonth = settings.getInt(LAST_MONTH, mMonth);
         int lastYear = settings.getInt(LAST_YEAR, mYear);
         
+		editor.putInt(LAST_DAY, mDay);
+		editor.putInt(LAST_MONTH, mMonth);
+		editor.putInt(LAST_YEAR, mYear);
+		editor.commit();
+		
         return lastDay != mDay || lastMonth != mMonth || lastYear != mYear;
     }
     
