@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="first_use_title">Welcome</string>
-    <string name="first_use_content">Stuff</string>
+    <string name="first_use_content">Hi, and thanks for downloading our app. 
+        This app is quick and easy to use. 
+        First, go to the PROFILE screen to get a calorie budget recommendation.
+        We set the default to 2000, but most people require more than that. 
+        Then just input the calorie content of any food you eat throughout the day.
+        This app will deduct it from your budget and reset the budget with each new day. 
+        This makes checking if you have the room to eat fast and easy!</string>
 	
     <string name="def">-1</string>
     <string name="app_name">Calorie Tracker</string>
@@ -34,7 +40,7 @@
 	<string name="email">Email address</string>
 	<string name="resend">Send yesterday\'s results</string>
 
-	<string name="p_recommend">is your daily recommended calorie budget</string>
+	<string name="p_recommend">is your recommended daily calorie budget</string>
 	<string name="p_submit_text">Set as my Daily Budget</string>
 	<string name="p_custom_text">Use a Custom Budget</string>
 	<string name="p_sex_def">Female</string>
