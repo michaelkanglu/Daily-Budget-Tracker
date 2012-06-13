@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
@@ -36,6 +39,8 @@ public class Profile extends Activity {
 	int weeklyIndex;
 	int activiIndex;
 	
+	boolean spinnerMutex;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -47,6 +52,35 @@ public class Profile extends Activity {
 	public void onResume(){
 		super.onResume();
 		restoreButtonInfo();
+		spinnerMutex=false;
+		((Spinner)findViewById(R.id.p_activity_spinner)).setOnItemSelectedListener(new OnItemSelectedListener() {
+		    
+		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+		        if(spinnerMutex){
+		        	activiIndex = position;
+		        	updateRecommendation();
+		        }
+		    }
+		    
+		    public void onNothingSelected(AdapterView<?> parentView) {
+		        // your code here
+		    }
+		});
+		
+		((Spinner)findViewById(R.id.p_weekly_spinner)).setOnItemSelectedListener(new OnItemSelectedListener() {
+		    
+		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+		        if(spinnerMutex){
+		        	weeklyIndex = position;
+		        	updateRecommendation();
+		        }
+		    }
+		    
+		    public void onNothingSelected(AdapterView<?> parentView) {
+		        // your code here
+		    }
+		});
+		spinnerMutex=true;
 	}
 	
 	@Override
@@ -78,6 +112,7 @@ public class Profile extends Activity {
 		setWeightText((int)mWeight);
 		setWeeklyItem(weeklyIndex);
 		setActivityItem(activiIndex);
+		updateRecommendation();
 	}
 	
 	public void saveButtonInfo(){
@@ -433,7 +468,25 @@ public class Profile extends Activity {
 	
 	//TODO: Actually write the math formula
 	public void updateRecommendation(){
+		Log.i("Budget", "Suggested Budget Updated");
+	}
+	
+	public void updateMasterBudget(View view){
+        SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        EditText mUpdateBox = (EditText)findViewById(R.id.p_budget_goal);
+
+    	int value = Integer.parseInt(mUpdateBox.getText().toString());
+    	
+        int budget = settings.getInt(DailyBudgetTracker.BUDGET, 2000);
+        int runningBudget = settings.getInt(DailyBudgetTracker.RUNNING_BUDGET, 2000);
+    	int diff = value - budget;
+    	budget = value;
+    	runningBudget = runningBudget + diff;   
 		
+        editor.putInt(DailyBudgetTracker.RUNNING_BUDGET, runningBudget);
+        editor.putInt(DailyBudgetTracker.BUDGET, budget);
+        editor.commit();
 	}
 	
     public void openSettings(View view) {
