@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Profile extends Activity {
 	
@@ -582,6 +583,10 @@ public class Profile extends Activity {
         editor.putInt(DailyBudgetTracker.RUNNING_BUDGET, runningBudget);
         editor.putInt(DailyBudgetTracker.BUDGET, budget);
         editor.commit();
+        
+		CharSequence text = "Your budget has been updated!";
+		Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
+		toast.show();
 	}
 	
     public void openSettings(View view) {
