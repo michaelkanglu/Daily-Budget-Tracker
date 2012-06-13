@@ -32,19 +32,13 @@
 	    android:layout_height="wrap_content"
 	    android:text="@string/s_budg_disp"
 	    android:textAppearance="?android:attr/textAppearanceMedium" />
-	<Button
-	    android:id="@+id/reset_button"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_gravity="left"
-	    android:onClick="resetApp"
-	    android:text="@string/button_reset" />
-	
+
 	<EditText 
 	    android:id="@+id/email"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content" 
-	    android:hint="@string/email"/>
+	    android:hint="@string/email"
+	    android:layout_marginTop="20dp" />
 	<LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -64,6 +58,15 @@
 	        android:text="@string/export" />
 	    
 	</LinearLayout>
+	
+    <Button
+        android:id="@+id/reset_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:onClick="resetApp"
+        android:text="@string/button_reset" 
+        android:layout_marginTop="50dp" />
         <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"

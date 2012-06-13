@@ -7,6 +7,7 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -32,16 +33,34 @@ public class Settings extends Activity {
 	
 	/**resets the whole app to out of box settings. Debug purposes*/
     public void resetApp(View view){
+    	// Confirmation dialog for reset
+    	String title = "Reset";
+    	String message = "Reset app to initial settings?";
+    	AlertDialog confirm = new AlertDialog.Builder(this).create();
+    	confirm.setTitle(title);
+    	confirm.setMessage(message);
+    	confirm.setButton("Confirm", new DialogInterface.OnClickListener() {			
+			public void onClick(DialogInterface dialog, int which) {
+				// Reset the app
+		        SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
+		        SharedPreferences.Editor editor = settings.edit();
+		        editor.clear();
+		        editor.commit();
+		        
+		    	TrackingDatabase db_helper = new TrackingDatabase(getApplicationContext());
+		    	db_helper.resetDatabase();
+		    	
+		        updateBudgetText(2000);
+			}
+		});
+
+    	confirm.setButton2("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				//Do nothing
+			}
+		});
     	
-        SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.clear();
-        editor.commit();
-        
-    	TrackingDatabase db_helper = new TrackingDatabase(getApplicationContext());
-    	db_helper.resetDatabase();
-    	
-        updateBudgetText(2000);
+    	confirm.show();
     }
     
     /**Sets the master  to a new value and scales running budget by appropriate amount*/
@@ -162,7 +181,7 @@ public class Settings extends Activity {
     public void restorePreviousExports() {
     	SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
     	EditText email = (EditText) findViewById(R.id.email);
-    	email.setText(settings.getString(DailyBudgetTracker.EMAIL, null)); 
+    	email.setText(settings.getString(DailyBudgetTracker.EMAIL, null));
     	
     	CheckBox export = (CheckBox) findViewById(R.id.export_check);
     	export.setChecked(settings.getBoolean(DailyBudgetTracker.EXPORT, false));
