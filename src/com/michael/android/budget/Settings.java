@@ -32,20 +32,16 @@ public class Settings extends Activity {
 	
 	/**resets the whole app to out of box settings. Debug purposes*/
     public void resetApp(View view){
-    	int budget = 2000;
-    	int runningBudget = 2000;
     	
         SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(DailyBudgetTracker.RUNNING_BUDGET, runningBudget);
-        editor.putInt(DailyBudgetTracker.BUDGET, budget);
-        editor.putBoolean(DailyBudgetTracker.FIRST_USE, true);
+        editor.clear();
         editor.commit();
         
     	TrackingDatabase db_helper = new TrackingDatabase(getApplicationContext());
     	db_helper.resetDatabase();
     	
-        updateBudgetText(budget);
+        updateBudgetText(2000);
     }
     
     /**Sets the master  to a new value and scales running budget by appropriate amount*/
@@ -101,7 +97,7 @@ public class Settings extends Activity {
     private void updateBudgetText(int newMasBudget){
     	TextView text = (TextView)findViewById(R.id.s_budg_text);
     	String value = getResources().getString(R.string.s_budg_disp);
-    	value = value + " " + Integer.toString(newMasBudget);
+    	value = value + " " + Integer.toString(newMasBudget) + " Cal/day";
     	text.setText(value);
     }
     

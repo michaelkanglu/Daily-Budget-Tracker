@@ -30,7 +30,8 @@
 	<Spinner
 	    android:id="@+id/unit_select"
 	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content" />
+	    android:layout_height="wrap_content"
+	    android:entries="@array/unit_array" />
 
 	<EditText
 	    android:id="@+id/food_input_box"
@@ -54,33 +55,32 @@
         android:layout_height="fill_parent"
         android:orientation = "horizontal" >
 
-		<Button
-		    android:id="@+id/m_main_button"
-		    android:enabled="false"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_gravity="bottom"
-		    android:layout_weight="1"
-		    android:onClick="openMain"
-		    android:text="@string/button_main" />
-		
-		<Button
-		    android:id="@+id/m_history_button"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_gravity="bottom"
-		    android:layout_weight="1"
-		    android:onClick="openHistory"
-		    android:text="@string/button_history" />
-		
-		<Button
-		    android:id="@+id/m_settings_button"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_gravity="bottom"
-		    android:layout_weight="1"
-		    android:onClick="openSettings"
-		    android:text="@string/button_settings" />
+		    <Button
+		        android:id="@+id/m_profile_button"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="bottom"
+		        android:layout_weight="1"
+		        android:onClick="openProfile"
+		        android:text="@string/button_profile" />
+
+		        <Button
+		            android:id="@+id/m_history_button"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:layout_gravity="bottom"
+		            android:layout_weight="1"
+		            android:onClick="openHistory"
+		            android:text="@string/button_history" />
+
+		            <Button
+		                android:id="@+id/m_settings_button"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_gravity="bottom"
+		                android:layout_weight="1"
+		                android:onClick="openSettings"
+		                android:text="@string/button_settings" />
 
     </LinearLayout>
     
