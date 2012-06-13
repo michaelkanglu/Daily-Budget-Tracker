@@ -115,7 +115,7 @@ public class DailyBudgetTracker extends Activity {
         updateRunningBudget();
     }
     
-    //saves most up to date budget information for other activites to use
+    //saves most up to date budget information for other activities to use
     @Override
     protected void onPause(){
        super.onPause();
@@ -134,10 +134,6 @@ public class DailyBudgetTracker extends Activity {
       editor.putInt(RUNNING_BUDGET, mRunningBudget);
       editor.putInt(BUDGET, mBudget);
       
-      /*editor.putInt(LAST_DAY, mDay);
-      editor.putInt(LAST_MONTH, mMonth);
-      editor.putInt(LAST_YEAR, mYear);*/
-
       editor.putBoolean(FIRST_USE, firstUse);
       editor.commit();
     }

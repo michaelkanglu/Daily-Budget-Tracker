@@ -17,7 +17,8 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:paddingBottom="2dp" />
 
     <EditText
         android:id="@+id/input_box"
