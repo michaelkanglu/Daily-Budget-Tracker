@@ -43,10 +43,7 @@ public class DailyBudgetTracker extends Activity {
 		
 		int[] mUnitValues;
 		
-		//updated when app created and saved when app is destroyed
-		int mDay;
-		int mMonth;
-		int mYear;
+
 		
 		//countdowntimer is an abstract class, so extend it and fill in methods
 	public class BudgetCounter extends CountDownTimer{
@@ -161,7 +158,12 @@ public class DailyBudgetTracker extends Activity {
 			unlockAllButtons();
 			return;
 		}
-    	
+		
+        if(isNewDay()){
+        	resetData();
+        }
+		
+		
     	String unit = ((TextView)mUnitSelect.getSelectedView()).getText().toString();
     	value = value * getUnitValue(unit);
     	
@@ -249,20 +251,20 @@ public class DailyBudgetTracker extends Activity {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         
-        mDay = today.get(Calendar.DATE);
-        mMonth = today.get(Calendar.MONTH);
-        mYear = today.get(Calendar.YEAR) - 1900;
+        int day = today.get(Calendar.DATE);
+        int month = today.get(Calendar.MONTH);
+        int year = today.get(Calendar.YEAR) - 1900;
         
-        int lastDay = settings.getInt(LAST_DAY, mDay);
-        int lastMonth = settings.getInt(LAST_MONTH, mMonth);
-        int lastYear = settings.getInt(LAST_YEAR, mYear);
+        int lastDay = settings.getInt(LAST_DAY, day);
+        int lastMonth = settings.getInt(LAST_MONTH, month);
+        int lastYear = settings.getInt(LAST_YEAR, year);
         
-		editor.putInt(LAST_DAY, mDay);
-		editor.putInt(LAST_MONTH, mMonth);
-		editor.putInt(LAST_YEAR, mYear);
+		editor.putInt(LAST_DAY, day);
+		editor.putInt(LAST_MONTH, month);
+		editor.putInt(LAST_YEAR, year);
 		editor.commit();
 		
-        return lastDay != mDay || lastMonth != mMonth || lastYear != mYear;
+        return lastDay != day || lastMonth != month || lastYear != year;
     }
     
     /**Restores saved budget info including master budget and running budget*/

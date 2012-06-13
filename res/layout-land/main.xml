@@ -62,7 +62,7 @@
                 android:id="@+id/m_profile_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:onClick="openMain"
+                android:onClick="openProfile"
                 android:text="@string/button_profile" />
 
             <Button
