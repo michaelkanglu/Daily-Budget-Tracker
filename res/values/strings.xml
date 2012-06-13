@@ -29,6 +29,7 @@
     <string name="history_edit_value">Calories</string>
     <string name="history_today">View Today\'s</string>
     <string name="history_yesterday">View Yesterday\'s</string>
+    <string name="history_help">Edit or delete contents by long pressing the row.</string>
 	
 	<string name="export">Notify me daily</string>	
 	<string name="email">Email address</string>
