@@ -97,7 +97,7 @@ public class Settings extends Activity {
     private void updateBudgetText(int newMasBudget){
     	TextView text = (TextView)findViewById(R.id.s_budg_text);
     	String value = getResources().getString(R.string.s_budg_disp);
-    	value = value + " " + Integer.toString(newMasBudget);
+    	value = value + " " + Integer.toString(newMasBudget) + " Cal/day";
     	text.setText(value);
     }
     

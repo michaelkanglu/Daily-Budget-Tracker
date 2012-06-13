@@ -468,13 +468,95 @@ public class Profile extends Activity {
 	
 	//TODO: Actually write the math formula
 	public void updateRecommendation(){
-		Log.i("Budget", "Suggested Budget Updated");
+		((TextView)findViewById(R.id.p_budget_goal)).setText(Integer.toString(calculateRecommendation()));
+	}
+	
+	private int calculateRecommendation(){
+		float height = mHeight;
+		if(unitInches){
+			height = height * 2.45f;
+		}
+		float weight = mWeight;
+		if(unitPounds){
+			weight = weight / 2.2f;
+		}
+		
+		float intake;
+		if(mGender){
+			intake = (9.36f*weight + 7.26f*height);
+			switch(activiIndex){
+			case 4:
+				intake = intake * 1.0f;
+				break;
+			case 3:
+				intake = intake * 1.12f;
+				break;
+			case 2:
+				intake = intake * 1.27f;
+				break;
+			case 1:
+				intake = intake * 1.45f;
+				break;
+			case 0:
+				intake = intake * 1.55f;
+				break;
+			default:
+				break;
+			}
+			intake = intake + 354 - 6.91f*mAge;
+		}
+		else{
+			intake = (15.91f*weight + 5.396f*height);
+			switch(activiIndex){
+			case 4:
+				intake = intake * 1.0f;
+				break;
+			case 3:
+				intake = intake * 1.11f;
+				break;
+			case 2:
+				intake = intake * 1.25f;
+				break;
+			case 1:
+				intake = intake * 1.48f;
+				break;
+			case 0:
+				intake = intake * 1.75f;
+				break;
+			default:
+				break;
+			}
+			intake = intake + 662 - 9.53f*mAge;
+		}
+		
+
+		
+		switch(weeklyIndex){
+		case 4:
+			intake = intake - 500.0f;
+			break;
+		case 3:
+			intake = intake - 250.0f;
+			break;
+		case 2:
+			break;
+		case 1:
+			intake = intake + 250.0f;
+			break;
+		case 0:
+			intake = intake + 500.0f;
+			break;
+		default:
+			break;
+		}		
+		
+		return (int)intake;
 	}
 	
 	public void updateMasterBudget(View view){
         SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        EditText mUpdateBox = (EditText)findViewById(R.id.p_budget_goal);
+        TextView mUpdateBox = (TextView)findViewById(R.id.p_budget_goal);
 
     	int value = Integer.parseInt(mUpdateBox.getText().toString());
     	
