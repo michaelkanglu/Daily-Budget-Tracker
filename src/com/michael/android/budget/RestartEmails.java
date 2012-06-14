@@ -22,6 +22,7 @@ public class RestartEmails extends BroadcastReceiver {
 	}
 	
 	public boolean sendEmails() {
+		// Retrieve the preference settings for email notifications.
 		SharedPreferences settings = mContext.getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
     	return settings.getBoolean(DailyBudgetTracker.EXPORT, false);
 	}

@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DailyBudgetTracker extends Activity {
 	private TrackingDatabase db_helper;
@@ -260,8 +259,11 @@ public class DailyBudgetTracker extends Activity {
         //read unit selected and find total caloric content of entry
     	String unit = ((TextView)mUnitSelect.getSelectedView()).getText().toString();
     	value = value * getUnitValue(unit);
-    	
     	addFoodToDatabase(f_input,value);
+    	
+    	// Clear out the EditText fields for next entry.
+    	mInputBox.setText(null);
+    	mFoodInputBox.setText(null);
     	
     	//set up data for the countdown counter and store final data immediately for integrity purposes
     	oRunningBudget = mRunningBudget; 

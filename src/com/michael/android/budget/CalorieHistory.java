@@ -24,7 +24,6 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class CalorieHistory extends Activity {
 	
@@ -49,7 +48,7 @@ public class CalorieHistory extends Activity {
     private boolean create_dinner = true; 
     private boolean create_midnight = true;
     
-    private static class FoodRow extends TableRow{
+    private static class FoodRow extends TableRow {
         // TableRow that contains food information 
     	// and contains id of corresponding database entry
 
@@ -102,10 +101,8 @@ public class CalorieHistory extends Activity {
     
     public void populateTable(TableLayout tbl) {
         // Populate the history table with all database entries
-    	
     	resetHeadingFlags();
     	
-    	// Set Today/Yesterday threshold
 		long time = System.currentTimeMillis();
 		Calendar today = Calendar.getInstance();
 		today.setTimeInMillis(time);
@@ -115,9 +112,10 @@ public class CalorieHistory extends Activity {
 		today.set(Calendar.MILLISECOND,0);
 		time = today.getTimeInMillis();
 		
-		// Retrieve entries and add them to tbl
     	SQLiteDatabase db = db_helper.getReadableDatabase();
     	Cursor cursor;
+    	
+    	// Select either yesterday's or today's entries.
     	if(displayToday){
     		cursor = db.rawQuery("SELECT * FROM Track " + 
     							 "WHERE DateTime > " + time, null);
@@ -127,6 +125,7 @@ public class CalorieHistory extends Activity {
     							 "WHERE DateTime < " + time, null);
     	}
     	
+		// Retrieve entries and add them to table.
         if (cursor.moveToFirst()) {
             do {
                 int id = Integer.parseInt(cursor.getString(0));
@@ -141,7 +140,7 @@ public class CalorieHistory extends Activity {
     }  
 	
 	public void resetHeadingFlags() {
-		
+		// Resets the flags used for generating time-of-day groups.
 		create_breakfast = true;
 		create_lunch = true;
 		create_dinner = true;
@@ -151,8 +150,7 @@ public class CalorieHistory extends Activity {
     public void createFoodRow (TableLayout tbl, Food fd, int id, long time) {
     	// Generates a foodRow object from fd and adds it to the table
     	
-    	// Gets data from the parameters, 
-    	// and creates the visual entry for the food.
+    	// Gets data from the parameters, and creates the visual entry for the food.
     	makeHeading(tbl, time);
     	FoodRow fRow = new FoodRow(this);
     	fRow.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -195,7 +193,6 @@ public class CalorieHistory extends Activity {
         title.setTextSize(36);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         
-        //titleRow.addView(title);
         tbl.addView(title);
     }
 	
@@ -212,8 +209,7 @@ public class CalorieHistory extends Activity {
 	}
 
 	public void makeHeading(TableLayout tbl, long date) {
-		// Creates a heading depending on the time of day 
-		// the food was first entered into the app.
+		// Creates a heading depending on the time of day the food was first entered into the app.
 		
 		Calendar time = Calendar.getInstance();
 		time.setTimeInMillis(date);
@@ -245,8 +241,7 @@ public class CalorieHistory extends Activity {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
-		// Generates a context menu for the purpose
-		// of editing/deleting database entries
+		// Generates a context menu for the purpose of editing/deleting database entries.
 		
 		super.onCreateContextMenu(menu, v, menuInfo);
 		sRow = (FoodRow) v;
@@ -350,15 +345,6 @@ public class CalorieHistory extends Activity {
 
 		String nFood = foodInputBox.getText().toString();
 		int nValue = Integer.parseInt(valueInputBox.getText().toString());
-
-		// Catch negative numbers
-		if(nValue < 0){
-			CharSequence text = "The value is less than zero!";
-			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
-			toast.show();
-			valueInputBox.setText(null);
-			return;
-		}
 		int rowID = sRow.getDatabaseID();
 
 		Food food = new Food(nFood, nValue);
@@ -424,8 +410,7 @@ public class CalorieHistory extends Activity {
 	}
 
 	public void displayToggle(View view){
-		// Toggle between viewing yesterday's and
-		// today's food. Reupdates everything
+		// Toggle between viewing yesterday's and today's food. Updates everything
 		
 		displayToday = !displayToday;
 		TableLayout tbl = (TableLayout)findViewById(R.id.foodtable);
@@ -436,6 +421,7 @@ public class CalorieHistory extends Activity {
 	}
 	
 	public void setToggleButton(){
+		// Changes the toggle button to either yesterday or today.
 		if(displayToday)
 			((Button)findViewById(R.id.h_display_toggle)).setText(this.getResources().getString(R.string.history_yesterday));
 		else

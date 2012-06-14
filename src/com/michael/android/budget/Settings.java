@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Settings extends Activity {
-	public static PendingIntent emailNote;
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -33,7 +32,7 @@ public class Settings extends Activity {
 	
 	/**resets the whole app to out of box settings. Debug purposes*/
     public void resetApp(View view){
-    	// Confirmation dialog for reset
+    	// Creates confirmation dialog before resetting
     	String title = "Reset";
     	String message = "Reset app to initial settings?";
     	AlertDialog confirm = new AlertDialog.Builder(this).create();
@@ -86,16 +85,7 @@ public class Settings extends Activity {
     		mUpdateBox.setText(null);
     		return;
     	}
-    	
-    	//catch negative numbers
-    	if(value < 0){
-    		CharSequence text = "The value is less than zero!";
 
-    		Toast toast = Toast.makeText(context, text, duration);
-    		toast.show();
-    		mUpdateBox.setText(null);
-    		return;
-    	}
         int budget = settings.getInt(DailyBudgetTracker.BUDGET, 2000);
         int runningBudget = settings.getInt(DailyBudgetTracker.RUNNING_BUDGET, 2000);
     	int diff = value - budget;
@@ -124,6 +114,7 @@ public class Settings extends Activity {
     }
     
     public void addExportListener() {
+    	// Adds a listener for notification toggles.
     	final CheckBox check = (CheckBox) findViewById(R.id.export_check);
     	check.setOnClickListener(new OnClickListener() {
     		public void onClick(View v) {
@@ -205,7 +196,7 @@ public class Settings extends Activity {
 	public static void scheduleNotification(Context context, AlarmManager alarmMgr) {
 		// Schedule the notifications for everyday.
 		Intent intent = new Intent(context, EmailReceiver.class);
-		emailNote = PendingIntent.getBroadcast(context, 0, intent, 0);
+		PendingIntent emailNote = PendingIntent.getBroadcast(context, 0, intent, 0);
 		
 		Calendar time = Calendar.getInstance();
 		time.setTimeInMillis(System.currentTimeMillis());
@@ -222,12 +213,12 @@ public class Settings extends Activity {
 		// Stops the daily notifications.
 		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(this, EmailReceiver.class);
-		emailNote = PendingIntent.getBroadcast(this, 0, intent, 0);
+		PendingIntent emailNote = PendingIntent.getBroadcast(this, 0, intent, 0);
 		alarmMgr.cancel(emailNote);
 	}
 
 	public void resendEmail(View view) {
-		// Calls this method when you want to resend yesterday's results.
+		// Call this method when you want to send yesterday's results.
 		ExportEmail em = new ExportEmail(this);
 		em.startChooser();
 	}
