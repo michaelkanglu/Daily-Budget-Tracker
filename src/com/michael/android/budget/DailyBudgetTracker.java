@@ -45,21 +45,28 @@ public class DailyBudgetTracker extends Activity {
 		
 
 		
-		//countdowntimer is an abstract class, so extend it and fill in methods
+	/**a countdown timer that powers the Big Number's countdown animation**/
 	public class BudgetCounter extends CountDownTimer{
 		public BudgetCounter(long millisInFuture, long countDownInterval) {
 			super(millisInFuture, countDownInterval);
 		}
+		
+		/**update to the final information and unlock buttons for users to use**/
 		@Override
 		public void onFinish() {
 			updateRunningBudget();
+	    	mInputBox.setText(null);
+	    	mFoodInputBox.setText(null);
 			unlockAllButtons();
 		}
+		
+		/**decrement Big Number by stepSize and update color**/
 		@Override
 		public void onTick(long millisUntilFinished) {
 			
 			oRunningBudget = oRunningBudget - step;
 			double ratio = ((double)oRunningBudget)/mBudget;
+			
 			if(oRunningBudget - step > mRunningBudget){
 				mBudgetGoal.setText(Integer.toString(oRunningBudget));
 				mBudgetGoal.setTextColor(getColor(ratio));
@@ -71,7 +78,7 @@ public class DailyBudgetTracker extends Activity {
 		}
 	}
 		
-    /** Called when the activity is first created. */
+    /**called when the activity is first created**/
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,47 +90,39 @@ public class DailyBudgetTracker extends Activity {
         mInputBox = (EditText)findViewById(R.id.input_box);
         mFoodInputBox = (EditText)findViewById(R.id.food_input_box);
         db_helper = new TrackingDatabase(getApplicationContext());
-        
-        fillProgress(mRunningBudget);
       }
     
-    //checks if any other activity has modified the budget information and refreshes
+    /**checks if any other activity has modified the budget information and refreshes**/
     @Override
     public void onResume(){
     	super.onResume();
         
-    	//checks if it's a newday (this updates the last day opened information)
+    	//checks if it's a new day (this updates the last day opened information)
         if(isNewDay()){
         	resetData();
         }
     	
         restoreBudgetInfo(); 
         updateRunningBudget();
+    } 
+
+    /**to be called when the app is opened on a new day**/
+    private void resetData(){
+    	//clear the database of older entries
+    	db_helper.clearDatabase();
+    	
+    	//reset the running budget
+    	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        
+        mBudget = settings.getInt(BUDGET, 2000);
+        mRunningBudget = mBudget;
+        
+        editor.putInt(RUNNING_BUDGET, mBudget);
+        editor.commit();
     }
     
-    //saves most up to date budget information for other activities to use
-    @Override
-    protected void onPause(){
-       super.onPause();
-       
-       storeData();
-    }  
-    
-    //saves most up to date information and the date app was last OPENED
-    @Override
-    protected void onDestroy(){
-       super.onDestroy();
-       
-      SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-      SharedPreferences.Editor editor = settings.edit();
-      
-      editor.putInt(RUNNING_BUDGET, mRunningBudget);
-      editor.putInt(BUDGET, mBudget);
-      
-      editor.putBoolean(FIRST_USE, firstUse);
-      editor.commit();
-    }
-    
+    /**stores the budget data, that's it**/
     private void storeData(){
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -132,39 +131,139 @@ public class DailyBudgetTracker extends Activity {
         editor.putInt(BUDGET, mBudget);
         editor.commit();
     }
+
+    /**Updates the date information to current time then compares to when the app was last used*/    
+    private boolean isNewDay(){
+        Calendar today = Calendar.getInstance();
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        
+        int day = today.get(Calendar.DATE);
+        int month = today.get(Calendar.MONTH);
+        int year = today.get(Calendar.YEAR) - 1900;
+        
+        int lastDay = settings.getInt(LAST_DAY, day);
+        int lastMonth = settings.getInt(LAST_MONTH, month);
+        int lastYear = settings.getInt(LAST_YEAR, year);
+        
+		editor.putInt(LAST_DAY, day);
+		editor.putInt(LAST_MONTH, month);
+		editor.putInt(LAST_YEAR, year);
+		editor.commit();
+		
+        return lastDay != day || lastMonth != month || lastYear != year;
+    }
     
-    /*reads food information user inputs and updates database and budget appropriately**/
+    /**Restores saved budget info including master budget and running budget*/
+    private void restoreBudgetInfo(){
+    	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        mBudget = settings.getInt(BUDGET, 2000);
+        mRunningBudget = settings.getInt(RUNNING_BUDGET, 2000);
+        firstUse = settings.getBoolean(FIRST_USE, true);
+        
+        //displays information window on first use
+        if(firstUse){
+        	String title = this.getResources().getString(R.string.first_use_title);
+        	String message = this.getResources().getString(R.string.first_use_content);
+        	
+        	new AlertDialog.Builder(this).setTitle(title).setMessage(message).setNeutralButton("OK", null).show();
+        	firstUse = false;
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(FIRST_USE, firstUse);
+            editor.commit();
+        }
+        
+    }
+    
+    /**changes the Big Number to mRunningBudget and colors it*/  
+    private void updateRunningBudget(){
+    	double ratio = ((double)mRunningBudget)/mBudget;
+    	mBudgetGoal.setText(Integer.toString(mRunningBudget));
+    	mBudgetGoal.setTextColor(getColor(ratio));
+    	fillProgress(mRunningBudget);
+    }
+    
+    /**returns the appropriate color for the passed ratio**/
+    private int getColor(double ratio){
+    	int fColor = getResources().getColor(R.color.start);
+    	int red;
+    	int green;
+    	int blue;
+    	
+    	int fromColor;
+    	int toColor;
+    	
+    	//white
+    	if(ratio>1.0){
+    		fColor = getResources().getColor(R.color.start);
+    	}
+    	//white <> green
+    	else if(ratio > 0.0){
+    		fromColor = getResources().getColor(R.color.start);
+    		toColor = getResources().getColor(R.color.good);
+    		red = (int)((double)(Color.red(fromColor)-Color.red(toColor))*ratio + Color.red(toColor));
+    		green = (int)((double)(Color.green(fromColor)-Color.green(toColor))*ratio + Color.green(toColor));
+    		blue = (int)((double)(Color.blue(fromColor)-Color.blue(toColor))*ratio + Color.blue(toColor));
+    		fColor = Color.rgb(red, green, blue);
+    	}
+    	//green<>yellow
+    	else if(ratio > -0.2){
+    		fromColor = getResources().getColor(R.color.good);
+    		toColor = getResources().getColor(R.color.dangerous); 
+    		red = (int)(5*(double)(Color.red(fromColor)-Color.red(toColor))*ratio + Color.red(fromColor));
+    		green = (int)(5*(double)(Color.green(fromColor)-Color.green(toColor))*ratio + Color.green(fromColor));
+    		blue = (int)(5*(double)(Color.blue(fromColor)-Color.blue(toColor))*ratio + Color.blue(fromColor));
+    		fColor = Color.rgb(red, green, blue);
+    	}
+    	//yellow<>red
+    	else if(ratio > -0.4){
+    		fromColor = getResources().getColor(R.color.dangerous);
+    		toColor = getResources().getColor(R.color.bad);  
+    		red = (int)(5*(double)(Color.red(fromColor)-Color.red(toColor))*ratio - Color.red(toColor) + 2*Color.red(fromColor));
+    		green = (int)(5*(double)(Color.green(fromColor)-Color.green(toColor))*ratio - Color.green(toColor) + 2*Color.green(fromColor));
+    		blue = (int)(5*(double)(Color.blue(fromColor)-Color.blue(toColor))*ratio - Color.blue(toColor) + 2*Color.blue(fromColor));
+    		fColor = Color.rgb(red, green, blue);
+    	}
+    	//red
+    	else{
+    		fColor = getResources().getColor(R.color.bad);
+    	}
+    	return fColor;
+    }
+
+    /**Fills the progress bar with val**/
+    private void fillProgress(int val) {
+    	ProgressBar pbar = (ProgressBar) findViewById(R.id.pBar);
+    	pbar.setMax(mBudget);
+    	pbar.setProgress(0); // Needed due to bug in android. yes, really.
+    	pbar.setProgress(mBudget - val);
+    } 
+    
+    /**reads food information user inputs and updates database and budget appropriately**/
     public void inputValue(View view){
-    	lockAllButtons();
+    	
+    	//nutrition content of food
     	Editable num = mInputBox.getText();
-    	if (num.length() == 0) {
-    		unlockAllButtons();
+    	if (num.length() == 0) { 				//check for empty box
     		return;
     	}
 		int value = Integer.parseInt(num.toString());
-    	String f_input = mFoodInputBox.getText().toString();
-
-
-		// Catch negative numbers
-		if(value < 0){
-			CharSequence text = "The value is less than zero!";
-			Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
-			toast.show();
-			mInputBox.setText(null);
-			unlockAllButtons();
-			return;
-		}
 		
+		//food name
+    	String f_input = mFoodInputBox.getText().toString();
+		
+    	//if new day, reset the data to ensure food is logged in right place
         if(isNewDay()){
         	resetData();
         }
 		
-		
+        //read unit selected and find total caloric content of entry
     	String unit = ((TextView)mUnitSelect.getSelectedView()).getText().toString();
     	value = value * getUnitValue(unit);
     	
     	addFoodToDatabase(f_input,value);
     	
+    	//set up data for the countdown counter and store final data immediately for integrity purposes
     	oRunningBudget = mRunningBudget; 
     	mRunningBudget = mRunningBudget	- value;
 		storeData();
@@ -172,25 +271,32 @@ public class DailyBudgetTracker extends Activity {
     	if(step == 0){
     		step = 1;
     	}
+    	
+    	//lock all the buttons to keep user from interfering with countdown
+    	lockAllButtons();
     	BudgetCounter counter = new BudgetCounter(1200,60);
     	counter.start();
     }
-    
-    public void openProfile(View view){
-    	Intent intent = new Intent(this, Profile.class);
-    	startActivity(intent);
-    }
-    
-    public void openSettings(View view) {
-    	Intent intent = new Intent(this, Settings.class);
-    	startActivity(intent);
-    }
-    
-    public void openHistory(View view) {
-    	Intent intent = new Intent(this, CalorieHistory.class);
-    	startActivity(intent);
-    }
 
+    /**lock all buttons on the screen**/
+    private void lockAllButtons(){
+    	mInputBox.setClickable(false);
+    	mFoodInputBox.setClickable(false);
+    	mUnitSelect.setClickable(false);
+    	findViewById(R.id.input_button).setClickable(false);
+    	findViewById(R.id.m_history_button).setClickable(false);
+    	findViewById(R.id.m_settings_button).setClickable(false);
+    }
+    
+    /**unlock all buttons on the screen**/
+    private void unlockAllButtons(){
+    	mInputBox.setClickable(true);
+    	mFoodInputBox.setClickable(true);
+    	mUnitSelect.setClickable(true);
+    	findViewById(R.id.input_button).setClickable(true);
+    	findViewById(R.id.m_history_button).setClickable(true);
+    	findViewById(R.id.m_settings_button).setClickable(true);    	
+    }
     
     /**returns the caloric value of the unit passed into it*/  
     private int getUnitValue(String unit){
@@ -219,134 +325,19 @@ public class DailyBudgetTracker extends Activity {
     	db_helper.insertTuple(d_input);
     }
     
-    /**to be called when the app is opened on a new day**/
-    private void resetData(){
-    	//reset the database
-    	db_helper.clearDatabase();
-    	
-    	//reset the running budget
-    	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(RUNNING_BUDGET, settings.getInt(BUDGET, 2000));
-        editor.commit();
+    /**open the respective activity**/
+    public void openProfile(View view){
+    	Intent intent = new Intent(this, Profile.class);
+    	startActivity(intent);
     }
     
-    /**Changes the Big Number to be what running budget currently is*/  
-    private void updateRunningBudget(){
-    	double ratio = ((double)mRunningBudget)/mBudget;
-    	mBudgetGoal.setText(Integer.toString(mRunningBudget));
-    	mBudgetGoal.setTextColor(getColor(ratio));
-    	mInputBox.setText(null);
-    	mFoodInputBox.setText(null);
-    	fillProgress(mRunningBudget);
+    public void openSettings(View view) {
+    	Intent intent = new Intent(this, Settings.class);
+    	startActivity(intent);
     }
     
-    /**Updates the master date information to current time then compares to when the app was last used*/    
-    private boolean isNewDay(){
-        Calendar today = Calendar.getInstance();
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        
-        int day = today.get(Calendar.DATE);
-        int month = today.get(Calendar.MONTH);
-        int year = today.get(Calendar.YEAR) - 1900;
-        
-        int lastDay = settings.getInt(LAST_DAY, day);
-        int lastMonth = settings.getInt(LAST_MONTH, month);
-        int lastYear = settings.getInt(LAST_YEAR, year);
-        
-		editor.putInt(LAST_DAY, day);
-		editor.putInt(LAST_MONTH, month);
-		editor.putInt(LAST_YEAR, year);
-		editor.commit();
-		
-        return lastDay != day || lastMonth != month || lastYear != year;
-    }
-    
-    /**Restores saved budget info including master budget and running budget*/
-    private void restoreBudgetInfo(){
-    	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        mBudget = settings.getInt(BUDGET, 2000);
-        mRunningBudget = settings.getInt(RUNNING_BUDGET, 2000);
-        firstUse = settings.getBoolean(FIRST_USE, true);
-        if(firstUse){
-        	String title = this.getResources().getString(R.string.first_use_title);
-        	String message = this.getResources().getString(R.string.first_use_content);
-        	
-        	new AlertDialog.Builder(this).setTitle(title).setMessage(message).setNeutralButton("OK", null).show();
-        	firstUse = false;
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(FIRST_USE, firstUse);
-            editor.commit();
-        }
-        
-    }
-    
-    private void lockAllButtons(){
-    	mInputBox.setClickable(false);
-    	mFoodInputBox.setClickable(false);
-    	mUnitSelect.setClickable(false);
-    	findViewById(R.id.input_button).setClickable(false);
-    	findViewById(R.id.m_history_button).setClickable(false);
-    	findViewById(R.id.m_settings_button).setClickable(false);
-    }
-    
-    private void unlockAllButtons(){
-    	mInputBox.setClickable(true);
-    	mFoodInputBox.setClickable(true);
-    	mUnitSelect.setClickable(true);
-    	findViewById(R.id.input_button).setClickable(true);
-    	findViewById(R.id.m_history_button).setClickable(true);
-    	findViewById(R.id.m_settings_button).setClickable(true);    	
-    }
-    private int getColor(double ratio){
-    	int fColor = getResources().getColor(R.color.start);
-    	int red;
-    	int green;
-    	int blue;
-    	
-    	int fromColor;
-    	int toColor;
-    	
-    	if(ratio > 0.0){
-    		fromColor = getResources().getColor(R.color.start);
-    		toColor = getResources().getColor(R.color.good);
-    		red = (int)((double)(Color.red(fromColor)-Color.red(toColor))*ratio + Color.red(toColor));
-    		green = (int)((double)(Color.green(fromColor)-Color.green(toColor))*ratio + Color.green(toColor));
-    		blue = (int)((double)(Color.blue(fromColor)-Color.blue(toColor))*ratio + Color.blue(toColor));
-    		fColor = Color.rgb(red, green, blue);
-    	}
-    	else if(ratio > -0.2){
-    		fromColor = getResources().getColor(R.color.good);
-    		toColor = getResources().getColor(R.color.dangerous); 
-    		red = (int)(5*(double)(Color.red(fromColor)-Color.red(toColor))*ratio + Color.red(fromColor));
-    		green = (int)(5*(double)(Color.green(fromColor)-Color.green(toColor))*ratio + Color.green(fromColor));
-    		blue = (int)(5*(double)(Color.blue(fromColor)-Color.blue(toColor))*ratio + Color.blue(fromColor));
-    		fColor = Color.rgb(red, green, blue);
-    	}
-    	else if(ratio > -0.4){
-    		fromColor = getResources().getColor(R.color.dangerous);
-    		toColor = getResources().getColor(R.color.bad);  
-    		red = (int)(5*(double)(Color.red(fromColor)-Color.red(toColor))*ratio - Color.red(toColor) + 2*Color.red(fromColor));
-    		green = (int)(5*(double)(Color.green(fromColor)-Color.green(toColor))*ratio - Color.green(toColor) + 2*Color.green(fromColor));
-    		blue = (int)(5*(double)(Color.blue(fromColor)-Color.blue(toColor))*ratio - Color.blue(toColor) + 2*Color.blue(fromColor));
-    		fColor = Color.rgb(red, green, blue);
-    	}
-    	else{
-    		fColor = getResources().getColor(R.color.bad);
-    	}
-    	return fColor;
-    }
-    
-    public void fillProgress(int val) {
-    	// Fills the progress bar with updated count.
-        SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
-        int budget = settings.getInt(DailyBudgetTracker.BUDGET, 2000);
-        
-    	ProgressBar pbar = (ProgressBar) findViewById(R.id.pBar);
-    	pbar.setMax(budget);
-    	pbar.setProgress(0); // Needed due to bug in android. yes, really.
-    	pbar.setProgress(budget - val);
-    }
-    
+    public void openHistory(View view) {
+    	Intent intent = new Intent(this, CalorieHistory.class);
+    	startActivity(intent);
+    }  
 }

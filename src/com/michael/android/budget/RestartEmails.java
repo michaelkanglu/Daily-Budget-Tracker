@@ -1,9 +1,6 @@
 package com.michael.android.budget;
 
-import java.util.Calendar;
-
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,17 +16,7 @@ public class RestartEmails extends BroadcastReceiver {
 		
 		if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED") && sendEmails()) {
 			AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-			Intent i = new Intent(context, EmailReceiver.class);
-			Settings.emailNote = PendingIntent.getBroadcast(context, 0, i, 0);
-			
-			Calendar time = Calendar.getInstance();
-			time.setTimeInMillis(System.currentTimeMillis());
-			time.add(Calendar.DATE, 1);  // Add one day so that the notification does not show immediately.
-			time.set(Calendar.HOUR_OF_DAY, 0);
-			time.set(Calendar.MINUTE, 0);
-			time.set(Calendar.SECOND, 0);
-			time.set(Calendar.MILLISECOND, 0);
-			alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), AlarmManager.INTERVAL_DAY, Settings.emailNote);
+			Settings.scheduleNotification(context, alarmMgr);
 		}
 		
 	}

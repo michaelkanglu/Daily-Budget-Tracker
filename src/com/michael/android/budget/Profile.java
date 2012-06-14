@@ -1,5 +1,7 @@
 package com.michael.android.budget;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,27 +34,33 @@ public class Profile extends Activity {
 	
 	boolean unitInches;
 	boolean unitPounds;
-	boolean mGender;
+	boolean mGender;		//true=female, false=male
 	float mAge;
 	float mHeight;
 	float mWeight;
 	int weeklyIndex;
 	int activiIndex;
 	
-	boolean spinnerMutex;
+	boolean spinnerMutex; //prevents the spinners onItemSelected from being called too early
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		/**the spinner listeners will fire when the spinners gets called
+		 * as it considers it an instance of selecting an item. The mutex 
+		 * makes the listener code only fire upon a user powered selection
+		 */
+		spinnerMutex=false;
 		setContentView(R.layout.profile);
 		
 	}
 	
+	/**reinitializes old profile information and sets the spinner listeners**/
 	@Override
 	public void onResume(){
 		super.onResume();
-		restoreButtonInfo();
-		spinnerMutex=false;
+		
+		//activity level spinner listener
 		((Spinner)findViewById(R.id.p_activity_spinner)).setOnItemSelectedListener(new OnItemSelectedListener() {
 		    
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -63,10 +71,11 @@ public class Profile extends Activity {
 		    }
 		    
 		    public void onNothingSelected(AdapterView<?> parentView) {
-		        // your code here
+		        return;
 		    }
 		});
 		
+		//weekly weight loss spinner listener
 		((Spinner)findViewById(R.id.p_weekly_spinner)).setOnItemSelectedListener(new OnItemSelectedListener() {
 		    
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -77,9 +86,11 @@ public class Profile extends Activity {
 		    }
 		    
 		    public void onNothingSelected(AdapterView<?> parentView) {
-		        // your code here
+		        return;
 		    }
 		});
+		
+		restoreButtonInfo();
 		spinnerMutex=true;
 	}
 	
@@ -95,7 +106,7 @@ public class Profile extends Activity {
 		saveButtonInfo();
 	}
 	
-	public void restoreButtonInfo(){
+	private void restoreButtonInfo(){
 		SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
 		unitInches = settings.getBoolean(HEIGHT_METR, true);
 		unitPounds = settings.getBoolean(WEIGHT_METR, true);
@@ -115,7 +126,7 @@ public class Profile extends Activity {
 		updateRecommendation();
 	}
 	
-	public void saveButtonInfo(){
+	private void saveButtonInfo(){
 		SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
 		Editor editor = settings.edit();
 		
@@ -130,21 +141,15 @@ public class Profile extends Activity {
 		
 		editor.commit();
 	}
-	
+
+	/**launches the gender window**/
 	public void launchSexWindow(View view){
-		LayoutInflater layoutInflater  =
-				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
-	    final View popupView = 
-	    		layoutInflater.inflate(R.layout.pro_gender_popup, null);  
-	    final PopupWindow popupWindow = new PopupWindow(popupView, 
-	            										LayoutParams.WRAP_CONTENT,  
-	            										LayoutParams.WRAP_CONTENT);
-	    
-	    centerPopupWindow(popupView, popupWindow);
-	    
-		popupWindow.setFocusable(true);
-		popupWindow.update();
 		
+		AtomicReference<View> ref = new AtomicReference<View>();
+		final PopupWindow popupWindow = displayPopUpWindow(R.layout.pro_gender_popup, ref);
+		View popupView = ref.get();
+		
+		//set gender to female, close window
 	    Button btnFemale = (Button)popupView.findViewById(R.id.p_female_select);
 	    btnFemale.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -152,11 +157,10 @@ public class Profile extends Activity {
 	    		setSexText(mGender);
 	    		updateRecommendation();
 	    		popupWindow.dismiss();
-	    		
 	    	}
 	    });
 	    
-	    // When cancel button clicked
+	    //set gender to male, close window
 	    Button btnMale = (Button)popupView.findViewById(R.id.p_male_select);
 	    btnMale.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -169,24 +173,18 @@ public class Profile extends Activity {
 	}
 	
 	public void launchAgeWindow(View view){
-		LayoutInflater layoutInflater  =
-				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
-	    final View popupView = 
-	    		layoutInflater.inflate(R.layout.pro_age_popup, null);  
-	    final PopupWindow popupWindow = new PopupWindow(popupView, 
-	            										LayoutParams.WRAP_CONTENT,  
-	            										LayoutParams.WRAP_CONTENT);
-	    
+		
+		AtomicReference<View> ref = new AtomicReference<View>();
+		final PopupWindow popupWindow = displayPopUpWindow(R.layout.pro_age_popup, ref);
+		View popupView = ref.get();
+		
+		//initialize the Editbox to the current age
 	    final EditText ageInputBox = (EditText)popupView.findViewById(R.id.p_age_input_box);
 	    ageInputBox.setText(Integer.toString((int)mAge));
-	    // Place focus at the end of the edit text, rather than the beginning.
-	 	ageInputBox.setSelection(ageInputBox.getText().length());
-	    
-	    centerPopupWindow(popupView, popupWindow);
-	    
-		popupWindow.setFocusable(true);
-		popupWindow.update();
-		
+	    //place focus at the end of the edit text, rather than the beginning.
+	 	ageInputBox.setSelection(ageInputBox.getText().length());	
+	 	
+	 	//when submit button clicked, save age, update big number, close window
 	    Button btnSubmitAge = (Button)popupView.findViewById(R.id.p_submit_age);
 	    btnSubmitAge.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -200,7 +198,7 @@ public class Profile extends Activity {
 	    	}
 	    });
 	    
-	    // When cancel button clicked
+	    //when cancel button clicked, close the window
 	    Button btnCancelAge = (Button)popupView.findViewById(R.id.p_cancel_age);
 	    btnCancelAge.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -210,32 +208,27 @@ public class Profile extends Activity {
 	}
 	
 	public void launchWeightWindow(View view){
-		LayoutInflater layoutInflater  =
-				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
-	    final View popupView = 
-	    		layoutInflater.inflate(R.layout.pro_weight_popup, null);  
-	    final PopupWindow popupWindow = new PopupWindow(popupView, 
-	            										LayoutParams.WRAP_CONTENT,  
-	            										LayoutParams.WRAP_CONTENT);
-	    
-	    final EditText weightInputBox = (EditText)popupView.findViewById(R.id.p_weight_input_box);
-	    weightInputBox.setText(Integer.toString((int)mWeight));
-	    // Place focus at the end of the edit text, rather than the beginning.
-	 	weightInputBox.setSelection(weightInputBox.getText().length());
-	 	
-	    final TextView weightCaption = (TextView)popupView.findViewById(R.id.p_weight_caption);
-	    if(unitPounds){
-	    	weightCaption.setText(this.getResources().getString(R.string.p_weight_unit_im));
-	    }
-	    else{
-	    	weightCaption.setText(this.getResources().getString(R.string.p_weight_unit_si));
-	    }
-	    
-	    centerPopupWindow(popupView, popupWindow);
-	    
-		popupWindow.setFocusable(true);
-		popupWindow.update();
 		
+		AtomicReference<View> ref = new AtomicReference<View>();
+		final PopupWindow popupWindow = displayPopUpWindow(R.layout.pro_weight_popup, ref);
+		View popupView = ref.get();
+		
+		//put current weight in edit box
+		final EditText weightInputBox = (EditText)popupView.findViewById(R.id.p_weight_input_box);
+		weightInputBox.setText(Integer.toString((int)mWeight));
+		//place focus at the end of the edit text, rather than the beginning.
+		weightInputBox.setSelection(weightInputBox.getText().length());
+		 
+		//set the unit to the correct one
+		final TextView weightCaption = (TextView)popupView.findViewById(R.id.p_weight_caption);
+		if(unitPounds){
+		   weightCaption.setText(this.getResources().getString(R.string.p_weight_unit_im));
+		}
+		else{
+		   weightCaption.setText(this.getResources().getString(R.string.p_weight_unit_si));
+		}
+		    
+		//when toggle button clicked, toggle user input and saved value
 		Button btnToggleUnit = (Button)popupView.findViewById(R.id.p_weight_toggle);
 		btnToggleUnit.setOnClickListener(new View.OnClickListener() {
 			
@@ -243,10 +236,13 @@ public class Profile extends Activity {
 				unitPounds = !unitPounds;
 				
 				int weight = 0;
+				
+				//check if there is a user input
 				if(weightInputBox.getText().length()!=0){
 					weight = Integer.parseInt(weightInputBox.getText().toString());
 				}
 				
+				//convert the user input to the right units
 			    if(unitPounds){
 			    	weightCaption.setText(v.getResources().getString(R.string.p_weight_unit_im));
 			    	mWeight = mWeight * 2.2f;
@@ -264,10 +260,12 @@ public class Profile extends Activity {
 		    	// Place focus at the end of the edit text, rather than the beginning.
 			 	weightInputBox.setSelection(weightInputBox.getText().length());
 			 	
+			 	//convert the current saved weight to the right units
 		    	setWeightText((int)mWeight);
 			}
 		});
 		
+		//when submit button clicked, save user input, update recommendation, close window
 	    Button btnSubmitWeight = (Button)popupView.findViewById(R.id.p_submit_weight);
 	    btnSubmitWeight.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -281,7 +279,7 @@ public class Profile extends Activity {
 	    	}
 	    });
 	    
-	    // When cancel button clicked
+	    //when cancel button clicked, close window
 	    Button btnCancelWeight = (Button)popupView.findViewById(R.id.p_cancel_weight);
 	    btnCancelWeight.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -291,13 +289,10 @@ public class Profile extends Activity {
 	}
 	
 	public void launchHeightWindow(View view){
-		LayoutInflater layoutInflater  =
-				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
-	    final View popupView = 
-	    		layoutInflater.inflate(R.layout.pro_height_popup, null);  
-	    final PopupWindow popupWindow = new PopupWindow(popupView, 
-	            										LayoutParams.WRAP_CONTENT,  
-	            										LayoutParams.WRAP_CONTENT);
+
+		AtomicReference<View> ref = new AtomicReference<View>();
+		final PopupWindow popupWindow = displayPopUpWindow(R.layout.pro_height_popup, ref);
+		View popupView = ref.get();
 	    
 	    final EditText firstInputBox = (EditText)popupView.findViewById(R.id.p_first_input_box);
 	    final EditText secondInputBox = (EditText)popupView.findViewById(R.id.p_second_input_box);
@@ -305,6 +300,8 @@ public class Profile extends Activity {
 	    
 	    final TextView firstCaption = (TextView)popupView.findViewById(R.id.p_first_caption);
 	    final TextView secondCaption = (TextView)popupView.findViewById(R.id.p_second_caption);
+	    
+	    //set the captions and input boxes to the saved values and units
 	    if(unitInches){
 	    	firstCaption.setText(this.getResources().getString(R.string.p_height1_unit_im));
 	    	secondCaption.setText(this.getResources().getString(R.string.p_height2_unit_im));
@@ -317,15 +314,11 @@ public class Profile extends Activity {
 	    	firstInputBox.setText(Integer.toString((int)mHeight/100));
 	    	secondInputBox.setText(Integer.toString((int)mHeight%100));
 	    }
-	    // Place focus at the end of the edit text, rather than the beginning.
+	    //place focus at the end of the edit text, rather than the beginning.
 	 	firstInputBox.setSelection(firstInputBox.getText().length());
 	 	secondInputBox.setSelection(secondInputBox.getText().length());
-	 	
-	    centerPopupWindow(popupView, popupWindow);
-	    
-		popupWindow.setFocusable(true);
-		popupWindow.update();
 		
+	 	//when toggle button clicked, toggle user input and saved value
 		Button btnToggleUnit = (Button)popupView.findViewById(R.id.p_height_toggle);
 		btnToggleUnit.setOnClickListener(new View.OnClickListener() {
 			
@@ -334,12 +327,16 @@ public class Profile extends Activity {
 				
 				int height = 0;
 				
+				//if changing to inches
 			    if(unitInches){
+			    	//set unit text
 			    	firstCaption.setText(v.getResources().getString(R.string.p_height1_unit_im));
 			    	secondCaption.setText(v.getResources().getString(R.string.p_height2_unit_im));
 			    	
+			    	//convert saved height
 			    	mHeight = mHeight / 2.54f;
 			    	
+			    	//check input boxes for values and update them
 			    	if(firstInputBox.getText().length()!=0){
 			    		height = height + (Integer.parseInt(firstInputBox.getText().toString()) * 100);
 			    	}
@@ -351,12 +348,15 @@ public class Profile extends Activity {
 			    	firstInputBox.setText(Integer.toString(height/12));
 			    	secondInputBox.setText(Integer.toString(height%12));
 			    }
+			    //if changing to meters
 			    else{
 			    	firstCaption.setText(v.getResources().getString(R.string.p_height1_unit_si));
 			    	secondCaption.setText(v.getResources().getString(R.string.p_height2_unit_si));
 			    	
+			    	//convert saved height
 			    	mHeight = mHeight * 2.54f;
 			    	
+			    	//check input boxes for values and update them
 			    	if(firstInputBox.getText().length()!=0){
 			    		height = height + (Integer.parseInt(firstInputBox.getText().toString()) * 12);
 			    	}
@@ -373,9 +373,12 @@ public class Profile extends Activity {
 			 	firstInputBox.setSelection(firstInputBox.getText().length());
 			 	secondInputBox.setSelection(secondInputBox.getText().length());
 			 	
+			 	//update saved data display
 			    setHeightText((int)mHeight);
 			}
-		});		
+		});	
+		
+		//when submit button clicked, save user input, update recommendation, and close window
 	    Button btnSubmitHeight = (Button)popupView.findViewById(R.id.p_submit_height);
 	    btnSubmitHeight.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -408,7 +411,7 @@ public class Profile extends Activity {
 	    	}
 	    });
 	    
-	    // When cancel button clicked
+	    // When cancel button clicked, close window
 	    Button btnCancelHeight = (Button)popupView.findViewById(R.id.p_cancel_height);
 	    btnCancelHeight.setOnClickListener(new View.OnClickListener(){
 	    	public void onClick(View v) {
@@ -416,7 +419,27 @@ public class Profile extends Activity {
 	    	}
 	    });
 	}
+
+	/**display the inputed layout as a PopupWindow and return it**/
+	private PopupWindow displayPopUpWindow(int id, AtomicReference<View> ref){
+		LayoutInflater layoutInflater  =
+				(LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);  
+	    View popupView = 
+	    		layoutInflater.inflate(id, null);  
+	    PopupWindow popupWindow = new PopupWindow(popupView, 
+	            										LayoutParams.WRAP_CONTENT,  
+	            										LayoutParams.WRAP_CONTENT);
+	    
+	    centerPopupWindow(popupView, popupWindow);
+	    
+		popupWindow.setFocusable(true);
+		popupWindow.update();
+		
+		ref.set(popupView);
+		return popupWindow;
+	}
 	
+	/**center the popup window to the top of the screen**/
 	private void centerPopupWindow(View popupView, PopupWindow popupWindow){
 		popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 		View parent = findViewById(R.id.p_activity_spinner).getRootView();
@@ -424,7 +447,8 @@ public class Profile extends Activity {
 		popupWindow.showAtLocation(parent, Gravity.TOP, 0, 60);
 	}
 	
-	public void setSexText(Boolean sex){
+	/**cause buttons/spinners to disply user's profile data**/
+	private void setSexText(Boolean sex){
 		Button button = (Button)findViewById(R.id.p_sex_button);
 		if(sex)
 			button.setText("Female");
@@ -432,12 +456,12 @@ public class Profile extends Activity {
 			button.setText("Male");
 	}
 	
-	public void setAgeText(int age){
+	private void setAgeText(int age){
 		Button button = (Button)findViewById(R.id.p_age_button);
 		button.setText(Integer.toString(age) + "yrs");
 	}
 	
-	public void setHeightText(int height){
+	private void setHeightText(int height){
 		Button button = (Button)findViewById(R.id.p_height_button);
 		StringBuffer text = new StringBuffer();
 		if(unitInches){
@@ -457,7 +481,7 @@ public class Profile extends Activity {
 		button.setText(text.toString());
 	}
 	
-	public void setWeightText(int weight){
+	private void setWeightText(int weight){
 		Button button = (Button)findViewById(R.id.p_weight_button);
 		StringBuffer text = new StringBuffer();
 		text.append(weight);
@@ -470,34 +494,40 @@ public class Profile extends Activity {
 		button.setText(text.toString());
 	}
 	
-	public void setWeeklyItem(int index){
+	private void setWeeklyItem(int index){
 		Spinner spinner = (Spinner)findViewById(R.id.p_weekly_spinner);
 		spinner.setSelection(index);
 	}
 	
-	public void setActivityItem(int index){
+	private void setActivityItem(int index){
 		Spinner spinner = (Spinner)findViewById(R.id.p_activity_spinner);
 		spinner.setSelection(index);
 	}
 	
-	//TODO: Actually write the math formula
+	/**change the big number to display the recommended budget**/
 	public void updateRecommendation(){
 		((TextView)findViewById(R.id.p_budget_goal)).setText(Integer.toString(calculateRecommendation()));
 	}
 	
+	/**calculate the recommended budget based on profile data**/
 	private int calculateRecommendation(){
 		float height = mHeight;
+		//convert to cm
 		if(unitInches){
 			height = height * 2.45f;
 		}
+		
 		float weight = mWeight;
+		//convert to kg
 		if(unitPounds){
 			weight = weight / 2.2f;
 		}
 		
 		float intake;
+		//females
 		if(mGender){
 			intake = (9.36f*weight + 7.26f*height);
+			//multiply by activity multiplier
 			switch(activiIndex){
 			case 4:
 				intake = intake * 1.0f;
@@ -519,6 +549,7 @@ public class Profile extends Activity {
 			}
 			intake = intake + 354 - 6.91f*mAge;
 		}
+		//males
 		else{
 			intake = (15.91f*weight + 5.396f*height);
 			switch(activiIndex){
@@ -543,8 +574,7 @@ public class Profile extends Activity {
 			intake = intake + 662 - 9.53f*mAge;
 		}
 		
-
-		
+		//account for how much weight they wanna gain/lose
 		switch(weeklyIndex){
 		case 4:
 			intake = intake - 500.0f;
@@ -567,6 +597,7 @@ public class Profile extends Activity {
 		return (int)intake;
 	}
 	
+	/**sets the master budget to the current recommended budget**/
 	public void updateMasterBudget(View view){
         SharedPreferences settings = getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -574,6 +605,7 @@ public class Profile extends Activity {
 
     	int value = Integer.parseInt(mUpdateBox.getText().toString());
     	
+    	//update the runningBudget to be in line with the master
         int budget = settings.getInt(DailyBudgetTracker.BUDGET, 2000);
         int runningBudget = settings.getInt(DailyBudgetTracker.RUNNING_BUDGET, 2000);
     	int diff = value - budget;
@@ -584,6 +616,7 @@ public class Profile extends Activity {
         editor.putInt(DailyBudgetTracker.BUDGET, budget);
         editor.commit();
         
+        //display toast to confirm the update
 		CharSequence text = "Your budget has been updated!";
 		Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
 		toast.show();
