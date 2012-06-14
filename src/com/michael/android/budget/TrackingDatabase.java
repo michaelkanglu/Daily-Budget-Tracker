@@ -61,13 +61,14 @@ public class TrackingDatabase extends SQLiteOpenHelper {
 	}
 	
 	public void clearDatabase () {
+		// Clears entries that are earlier than yesterday's.
 		long time = System.currentTimeMillis();
 		Calendar yesterday = Calendar.getInstance();
-		yesterday.setTimeInMillis(time - 86400000);
 		yesterday.set(Calendar.HOUR_OF_DAY, 0);
 		yesterday.set(Calendar.MINUTE, 0);
 		yesterday.set(Calendar.SECOND,0);
 		yesterday.set(Calendar.MILLISECOND,0);
+		yesterday.add(Calendar.DATE, -1);
 		time = yesterday.getTimeInMillis();
 		
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -76,6 +77,7 @@ public class TrackingDatabase extends SQLiteOpenHelper {
 	}
 	
 	public void resetDatabase () {
+		// Clears everything from the database.
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.execSQL("DROP TABLE IF EXISTS " + DB_NAME);
 		onCreate(db);

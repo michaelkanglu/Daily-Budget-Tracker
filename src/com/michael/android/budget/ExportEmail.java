@@ -52,12 +52,14 @@ public class ExportEmail {
 	}
 	
 	public void startChooser() {
+		// Brings up the chooser menu to select email client.
 		Intent email = Intent.createChooser(createEmail(), "Send mail");
 		mContext.startActivity(email);
 	}
 	
 	public String getHistory() {
 		// Return the body of text for the result email.
+		// This is the previous day's history.
 		SharedPreferences settings = mContext.getSharedPreferences(DailyBudgetTracker.PREFS_NAME, 0);
 		int budget = settings.getInt(DailyBudgetTracker.BUDGET, 2000);
 		int total = 0;
@@ -67,6 +69,7 @@ public class ExportEmail {
 		TrackingDatabase db_helper = new TrackingDatabase(mContext);;
 		SQLiteDatabase db = db_helper.getReadableDatabase();
 		
+		// First determine the end of the previous day
 		long t_time = System.currentTimeMillis();
 		Calendar today = Calendar.getInstance();
 		today.setTimeInMillis(t_time);
@@ -76,6 +79,7 @@ public class ExportEmail {
 		today.set(Calendar.MILLISECOND, 0);
 		t_time = today.getTimeInMillis();	
 		
+		// Then get the start of the previous
 		today.add(Calendar.DATE, -1);
 		long y_time = today.getTimeInMillis();
 		
