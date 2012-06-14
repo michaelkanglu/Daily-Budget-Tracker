@@ -162,8 +162,11 @@ public class DailyBudgetTracker extends Activity {
 		
     	String unit = ((TextView)mUnitSelect.getSelectedView()).getText().toString();
     	value = value * getUnitValue(unit);
-    	
     	addFoodToDatabase(f_input,value);
+    	
+    	// Clear out the EditText fields for next entry.
+    	mInputBox.setText(null);
+    	mFoodInputBox.setText(null);
     	
     	oRunningBudget = mRunningBudget; 
     	mRunningBudget = mRunningBudget	- value;
@@ -236,8 +239,6 @@ public class DailyBudgetTracker extends Activity {
     	double ratio = ((double)mRunningBudget)/mBudget;
     	mBudgetGoal.setText(Integer.toString(mRunningBudget));
     	mBudgetGoal.setTextColor(getColor(ratio));
-    	mInputBox.setText(null);
-    	mFoodInputBox.setText(null);
     	fillProgress(mRunningBudget);
     }
     
