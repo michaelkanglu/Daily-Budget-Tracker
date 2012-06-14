@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Settings extends Activity {
-	public static PendingIntent emailNote;
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -146,7 +145,8 @@ public class Settings extends Activity {
     					
 						// Update preferences for email export.
 				        storeExportSettings(email, true);
-				        scheduleNotification();
+				        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+				        scheduleNotification(Settings.this, alarmMgr);
     				}
     			}
     			else {
@@ -201,11 +201,10 @@ public class Settings extends Activity {
 		editor.commit();
 	}
 	
-	public void scheduleNotification() {
+	public static void scheduleNotification(Context context, AlarmManager alarmMgr) {
 		// Schedule the notifications for everyday.
-		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		Intent intent = new Intent(this, EmailReceiver.class);
-		emailNote = PendingIntent.getBroadcast(this, 0, intent, 0);
+		Intent intent = new Intent(context, EmailReceiver.class);
+		PendingIntent emailNote = PendingIntent.getBroadcast(context, 0, intent, 0);
 		
 		Calendar time = Calendar.getInstance();
 		time.setTimeInMillis(System.currentTimeMillis());
@@ -221,6 +220,8 @@ public class Settings extends Activity {
 	public void stopNotification() {
 		// Stops the daily notifications.
 		AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		Intent intent = new Intent(this, EmailReceiver.class);
+		PendingIntent emailNote = PendingIntent.getBroadcast(this, 0, intent, 0);
 		alarmMgr.cancel(emailNote);
 	}
 
