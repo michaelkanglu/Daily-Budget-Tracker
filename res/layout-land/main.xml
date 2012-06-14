@@ -43,7 +43,8 @@
             <Spinner
                 android:id="@+id/unit_select"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:entries="@array/unit_array" />
 
             <EditText
                 android:id="@+id/food_input_box"
