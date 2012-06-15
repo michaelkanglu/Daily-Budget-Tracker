@@ -54,6 +54,8 @@ public class DailyBudgetTracker extends Activity {
 		@Override
 		public void onFinish() {
 			updateRunningBudget();
+			
+	    	// Clear out the EditText fields for next entry.
 	    	mInputBox.setText(null);
 	    	mFoodInputBox.setText(null);
 			unlockAllButtons();
@@ -260,10 +262,6 @@ public class DailyBudgetTracker extends Activity {
     	String unit = ((TextView)mUnitSelect.getSelectedView()).getText().toString();
     	value = value * getUnitValue(unit);
     	addFoodToDatabase(f_input,value);
-    	
-    	// Clear out the EditText fields for next entry.
-    	mInputBox.setText(null);
-    	mFoodInputBox.setText(null);
     	
     	//set up data for the countdown counter and store final data immediately for integrity purposes
     	oRunningBudget = mRunningBudget; 
