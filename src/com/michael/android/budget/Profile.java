@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +43,14 @@ public class Profile extends Activity {
 	int weeklyIndex;
 	int activiIndex;
 	
-	boolean spinnerMutex; //prevents the spinners onItemSelected from being called too early
+	boolean spinnerMutex; 	//prevents the spinners onItemSelected from being called too early
+	boolean editTextMutex;	//prevents edittext listener from being called at inoppurtune times
+	
+	float weightLbs;
+	float weightKgs;
+	
+	float heightIns;
+	float heightCms;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -219,49 +228,78 @@ public class Profile extends Activity {
 		//place focus at the end of the edit text, rather than the beginning.
 		weightInputBox.setSelection(weightInputBox.getText().length());
 		 
+
 		//set the unit to the correct one
 		final TextView weightCaption = (TextView)popupView.findViewById(R.id.p_weight_caption);
 		if(unitPounds){
 		   weightCaption.setText(this.getResources().getString(R.string.p_weight_unit_im));
+		   weightLbs=mWeight;
+		   weightKgs=mWeight/2.2f;
 		}
 		else{
 		   weightCaption.setText(this.getResources().getString(R.string.p_weight_unit_si));
+		   weightKgs=mWeight;
+		   weightLbs=mWeight*2.2f;
 		}
-		    
+		
+		weightInputBox.addTextChangedListener(new TextWatcher() {
+			
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				return;
+				
+			}
+			
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				return;
+				
+			}
+			
+			public void afterTextChanged(Editable s) {
+				if(editTextMutex){
+					if(unitPounds){
+						if(s.length()!=0)
+							weightLbs = (float)Integer.parseInt(s.toString());
+						else
+							weightLbs = 0;
+						weightKgs = weightLbs/2.2f;
+					}
+					else{
+						if(s.length()!=0)
+							weightKgs = (float)Integer.parseInt(s.toString());
+						else
+							weightKgs = 0;
+						weightLbs = weightKgs*2.2f;
+					}
+				}
+			}
+		});
+		
 		//when toggle button clicked, toggle user input and saved value
 		Button btnToggleUnit = (Button)popupView.findViewById(R.id.p_weight_toggle);
 		btnToggleUnit.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
+				editTextMutex = false;
 				unitPounds = !unitPounds;
-				
-				int weight = 0;
-				
-				//check if there is a user input
-				if(weightInputBox.getText().length()!=0){
-					weight = Integer.parseInt(weightInputBox.getText().toString());
-				}
 				
 				//convert the user input to the right units
 			    if(unitPounds){
 			    	weightCaption.setText(v.getResources().getString(R.string.p_weight_unit_im));
 			    	mWeight = mWeight * 2.2f;
-
-			    	weight = (int)(weight * 2.2);
+			    	weightInputBox.setText(Integer.toString((int)weightLbs));
 			    }
 			    else{
 			    	weightCaption.setText(v.getResources().getString(R.string.p_weight_unit_si));
 			    	mWeight = mWeight / 2.2f;
-
-			    	weight = (int)(weight / 2.2);
+			    	weightInputBox.setText(Integer.toString((int)weightKgs));
 			    }
-			    
-		    	weightInputBox.setText(Integer.toString(weight));
 		    	// Place focus at the end of the edit text, rather than the beginning.
 			 	weightInputBox.setSelection(weightInputBox.getText().length());
 			 	
 			 	//convert the current saved weight to the right units
 		    	setWeightText((int)mWeight);
+		    	editTextMutex = true;
 			}
 		});
 		
@@ -307,25 +345,79 @@ public class Profile extends Activity {
 	    	secondCaption.setText(this.getResources().getString(R.string.p_height2_unit_im));
 	    	firstInputBox.setText(Integer.toString((int)mHeight/12));
 	    	secondInputBox.setText(Integer.toString((int)mHeight%12));
+	    	heightIns = mHeight;
+	    	heightCms = mHeight * 2.54f;
 	    }
 	    else{
 	    	firstCaption.setText(this.getResources().getString(R.string.p_height1_unit_si));
 	    	secondCaption.setText(this.getResources().getString(R.string.p_height2_unit_si));
 	    	firstInputBox.setText(Integer.toString((int)mHeight/100));
 	    	secondInputBox.setText(Integer.toString((int)mHeight%100));
+	    	heightCms = mHeight;
+	    	heightIns = mHeight / 2.54f;
 	    }
 	    //place focus at the end of the edit text, rather than the beginning.
 	 	firstInputBox.setSelection(firstInputBox.getText().length());
 	 	secondInputBox.setSelection(secondInputBox.getText().length());
+		
+	 	TextWatcher textWatcher = new TextWatcher() {
+			
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				return;
+				
+			}
+			
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				return;
+				
+			}
+			
+			public void afterTextChanged(Editable s) {
+				if(editTextMutex){
+					if(unitInches){
+						heightIns = 0.0f;
+						if(firstInputBox.length()!=0){
+							heightIns = heightIns + (Integer.parseInt(firstInputBox.getText().toString())*12);
+						}
+						if(secondInputBox.length()!=0){
+							heightIns = heightIns + Integer.parseInt(secondInputBox.getText().toString());
+						}
+						heightCms = heightIns * 2.54f;
+					}
+					else{
+						StringBuffer buffer = new StringBuffer();
+						if(firstInputBox.length()!=0){
+							buffer.append(firstInputBox.getText());
+						}
+						else{
+							buffer.append(0);
+						}
+						buffer.append('.');
+						if(secondInputBox.length()!=0){
+							buffer.append(secondInputBox.getText());
+						}
+						else{
+							buffer.append(0);
+						}
+						heightCms = Float.parseFloat(buffer.toString());
+						heightCms = heightCms * 100f;
+						heightIns = heightCms / 2.54f;
+					}
+				}	
+			}
+		};
+	 	
+		firstInputBox.addTextChangedListener(textWatcher);
+		secondInputBox.addTextChangedListener(textWatcher);
 		
 	 	//when toggle button clicked, toggle user input and saved value
 		Button btnToggleUnit = (Button)popupView.findViewById(R.id.p_height_toggle);
 		btnToggleUnit.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
+				editTextMutex = false;
 				unitInches = !unitInches;
-				
-				int height = 0;
 				
 				//if changing to inches
 			    if(unitInches){
@@ -336,17 +428,8 @@ public class Profile extends Activity {
 			    	//convert saved height
 			    	mHeight = mHeight / 2.54f;
 			    	
-			    	//check input boxes for values and update them
-			    	if(firstInputBox.getText().length()!=0){
-			    		height = height + (Integer.parseInt(firstInputBox.getText().toString()) * 100);
-			    	}
-			    	
-			    	if(secondInputBox.getText().length()!=0){
-			    		height = height + Integer.parseInt(secondInputBox.getText().toString());
-			    	}
-			    	height = (int)(height / 2.54);
-			    	firstInputBox.setText(Integer.toString(height/12));
-			    	secondInputBox.setText(Integer.toString(height%12));
+			    	firstInputBox.setText(Integer.toString((int)heightIns/12));
+			    	secondInputBox.setText(Integer.toString((int)heightIns%12));
 			    }
 			    //if changing to meters
 			    else{
@@ -356,18 +439,10 @@ public class Profile extends Activity {
 			    	//convert saved height
 			    	mHeight = mHeight * 2.54f;
 			    	
-			    	//check input boxes for values and update them
-			    	if(firstInputBox.getText().length()!=0){
-			    		height = height + (Integer.parseInt(firstInputBox.getText().toString()) * 12);
-			    	}
+			    	String cmString = Integer.toString((int)heightCms);
 			    	
-			    	if(secondInputBox.getText().length()!=0){
-			    		height = height + Integer.parseInt(secondInputBox.getText().toString());
-			    	}
-			    	height = (int)(height * 2.54);
-			    	
-			    	firstInputBox.setText(Integer.toString(height/100));
-			    	secondInputBox.setText(Integer.toString(height%100));
+			    	firstInputBox.setText(Integer.toString((int)heightCms/100));
+			    	secondInputBox.setText(cmString.substring(cmString.length()-2));
 			    }
 				// Place focus at the end of the edit text, rather than the beginning.
 			 	firstInputBox.setSelection(firstInputBox.getText().length());
@@ -375,6 +450,7 @@ public class Profile extends Activity {
 			 	
 			 	//update saved data display
 			    setHeightText((int)mHeight);
+			    editTextMutex = true;
 			}
 		});	
 		
