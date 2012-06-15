@@ -228,7 +228,6 @@ public class Profile extends Activity {
 		//place focus at the end of the edit text, rather than the beginning.
 		weightInputBox.setSelection(weightInputBox.getText().length());
 		 
-
 		//set the unit to the correct one
 		final TextView weightCaption = (TextView)popupView.findViewById(R.id.p_weight_caption);
 		if(unitPounds){
@@ -256,7 +255,9 @@ public class Profile extends Activity {
 			}
 			
 			public void afterTextChanged(Editable s) {
+				//mutex check to make sure it's appropriate to run the code
 				if(editTextMutex){
+					//update weightLbs and weightKgs with new information
 					if(unitPounds){
 						if(s.length()!=0)
 							weightLbs = (float)Integer.parseInt(s.toString());
@@ -280,10 +281,11 @@ public class Profile extends Activity {
 		btnToggleUnit.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
+				//stops edit text listeners from being called
 				editTextMutex = false;
 				unitPounds = !unitPounds;
 				
-				//convert the user input to the right units
+				//display the correct saved weight, userinput, and units
 			    if(unitPounds){
 			    	weightCaption.setText(v.getResources().getString(R.string.p_weight_unit_im));
 			    	mWeight = mWeight * 2.2f;
@@ -294,11 +296,14 @@ public class Profile extends Activity {
 			    	mWeight = mWeight / 2.2f;
 			    	weightInputBox.setText(Integer.toString((int)weightKgs));
 			    }
+			    
 		    	// Place focus at the end of the edit text, rather than the beginning.
 			 	weightInputBox.setSelection(weightInputBox.getText().length());
 			 	
 			 	//convert the current saved weight to the right units
 		    	setWeightText((int)mWeight);
+		    	
+		    	//frees edittext listener
 		    	editTextMutex = true;
 			}
 		});
@@ -374,18 +379,23 @@ public class Profile extends Activity {
 			}
 			
 			public void afterTextChanged(Editable s) {
+				//mutex check to make sure it's appropriate to run code
 				if(editTextMutex){
+					//update heightIns and heightCms with new information
 					if(unitInches){
 						heightIns = 0.0f;
+						//num feet in inches
 						if(firstInputBox.length()!=0){
 							heightIns = heightIns + (Integer.parseInt(firstInputBox.getText().toString())*12);
 						}
+						//num extra inches
 						if(secondInputBox.length()!=0){
 							heightIns = heightIns + Integer.parseInt(secondInputBox.getText().toString());
 						}
 						heightCms = heightIns * 2.54f;
 					}
 					else{
+						//fetch user input as a single continuous string in meters
 						StringBuffer buffer = new StringBuffer();
 						if(firstInputBox.length()!=0){
 							buffer.append(firstInputBox.getText());
@@ -400,6 +410,8 @@ public class Profile extends Activity {
 						else{
 							buffer.append(0);
 						}
+						
+						//save into heightCms and convert to centimeters
 						heightCms = Float.parseFloat(buffer.toString());
 						heightCms = heightCms * 100f;
 						heightIns = heightCms / 2.54f;
@@ -416,6 +428,7 @@ public class Profile extends Activity {
 		btnToggleUnit.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
+				//stop the edittext listener being called
 				editTextMutex = false;
 				unitInches = !unitInches;
 				
@@ -428,6 +441,7 @@ public class Profile extends Activity {
 			    	//convert saved height
 			    	mHeight = mHeight / 2.54f;
 			    	
+			    	//set edit box text
 			    	firstInputBox.setText(Integer.toString((int)heightIns/12));
 			    	secondInputBox.setText(Integer.toString((int)heightIns%12));
 			    }
@@ -439,17 +453,21 @@ public class Profile extends Activity {
 			    	//convert saved height
 			    	mHeight = mHeight * 2.54f;
 			    	
+			    	//set edit box text
+			    	//string to preserve hanging zeroes
 			    	String cmString = Integer.toString((int)heightCms);
-			    	
 			    	firstInputBox.setText(Integer.toString((int)heightCms/100));
 			    	secondInputBox.setText(cmString.substring(cmString.length()-2));
 			    }
+			    
 				// Place focus at the end of the edit text, rather than the beginning.
 			 	firstInputBox.setSelection(firstInputBox.getText().length());
 			 	secondInputBox.setSelection(secondInputBox.getText().length());
 			 	
 			 	//update saved data display
 			    setHeightText((int)mHeight);
+			    
+			    //free edittext listener
 			    editTextMutex = true;
 			}
 		});	
