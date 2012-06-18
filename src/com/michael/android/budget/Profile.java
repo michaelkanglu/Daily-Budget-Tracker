@@ -569,6 +569,7 @@ public class Profile extends Activity {
 			if((height%100)<10){
 				text.append(0);
 			}
+			text.append('.');
 			text.append(height%100);
 			text.append("m");
 		}
