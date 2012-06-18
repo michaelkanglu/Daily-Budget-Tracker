@@ -279,7 +279,7 @@ public class DailyBudgetTracker extends Activity {
     	oRunningBudget = mRunningBudget; 
     	mRunningBudget = mRunningBudget	- value;
 		storeData();
-    	step = (oRunningBudget - mRunningBudget)/50;
+    	step = (oRunningBudget - mRunningBudget)/48;
     	if(step == 0){
     		step = 1;
     	}
