@@ -19,7 +19,8 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingBottom="2dp" />
+        android:paddingBottom="2dp"
+        android:progressDrawable="@drawable/custom_progress_bar" />
 
     <LinearLayout
         android:layout_width="match_parent"
