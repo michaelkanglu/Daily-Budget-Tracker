@@ -267,14 +267,14 @@ public class DailyBudgetTracker extends Activity {
     	oRunningBudget = mRunningBudget; 
     	mRunningBudget = mRunningBudget	- value;
 		storeData();
-    	step = (oRunningBudget - mRunningBudget)/12;
+    	step = (oRunningBudget - mRunningBudget)/25;
     	if(step == 0){
     		step = 1;
     	}
     	
     	//lock all the buttons to keep user from interfering with countdown
     	lockAllButtons();
-    	BudgetCounter counter = new BudgetCounter(1200,60);
+    	BudgetCounter counter = new BudgetCounter(1200,45);
     	counter.start();
     }
 

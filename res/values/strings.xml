@@ -10,7 +10,7 @@
         This makes checking if you have the room to eat fast and easy!</string>
 	
     <string name="def">-1</string>
-    <string name="app_name">Calorie Tracker</string>
+    <string name="app_name">Calorie Companion</string>
     <string name="edit_message">I just had&#8230;</string>
     <string name="food_edit_message">from eating&#8230; \(optional\)</string>
     
