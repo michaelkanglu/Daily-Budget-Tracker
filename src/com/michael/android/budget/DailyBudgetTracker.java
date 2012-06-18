@@ -7,6 +7,10 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -71,7 +75,7 @@ public class DailyBudgetTracker extends Activity {
 			if(oRunningBudget - step > mRunningBudget){
 				mBudgetGoal.setText(Integer.toString(oRunningBudget));
 				mBudgetGoal.setTextColor(getColor(ratio));
-				fillProgress(oRunningBudget);
+				fillProgress(oRunningBudget, ratio);
 			}
 			else{
 				onFinish();
@@ -181,7 +185,7 @@ public class DailyBudgetTracker extends Activity {
     	double ratio = ((double)mRunningBudget)/mBudget;
     	mBudgetGoal.setText(Integer.toString(mRunningBudget));
     	mBudgetGoal.setTextColor(getColor(ratio));
-    	fillProgress(mRunningBudget);
+    	fillProgress(mRunningBudget, ratio);
     }
     
     /**returns the appropriate color for the passed ratio**/
@@ -233,11 +237,19 @@ public class DailyBudgetTracker extends Activity {
     }
 
     /**Fills the progress bar with val**/
-    private void fillProgress(int val) {
+    private void fillProgress(int val, double ratio) {
     	ProgressBar pbar = (ProgressBar) findViewById(R.id.pBar);
     	pbar.setMax(mBudget);
-    	pbar.setProgress(0); // Needed due to bug in android. yes, really.
-    	pbar.setProgress(mBudget - val);
+    	if(ratio >= 0.0){
+    		pbar.setProgress(0); // Needed due to bug in android. yes, really.
+    		pbar.setProgress(mBudget - val);
+    	}
+    	if(ratio < 0.0){
+    		pbar.setProgress(0);
+    		pbar.setProgress((int)(mBudget + mBudget*ratio/0.4));
+    		pbar.setSecondaryProgress(0);
+    		pbar.setSecondaryProgress(mBudget);
+    	}
     } 
     
     /**reads food information user inputs and updates database and budget appropriately**/
