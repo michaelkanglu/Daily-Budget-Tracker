@@ -10,7 +10,7 @@
         This makes checking if you have the room to eat fast and easy!</string>
 	
     <string name="def">-1</string>
-    <string name="app_name">Calorie Companion</string>
+    <string name="app_name">Calorie Recall</string>
     <string name="edit_message">I just had&#8230;</string>
     <string name="food_edit_message">from eating&#8230; \(optional\)</string>
     
@@ -26,8 +26,7 @@
 	<string name="button_history">History</string>
 	<string name="button_settings">Settings</string>
 	<string name="button_back">Back</string>
-	
-	<string name="title">Today you ate:</string>
+
     <string name="row_edit">Edit</string>
     <string name="row_delete">Delete</string>
 	
@@ -49,9 +48,8 @@
 	<string name="p_height_def">5ft. 8in.</string>
 	<string name="p_weight_def">130 lbs.</string>
 	<string name="p_weekly_caption">Desired Weight Change per Week</string>
-	<string name="p_weekly_def">Maintain Current Weight</string>
 	<string name="p_activity_caption">Amount of Physical Activity per Day</string>
-	<string name="p_activity_def">Sedentary</string>
+	
 	
 	<string name="p_male">Male</string>
 	<string name="p_female">Female</string>
