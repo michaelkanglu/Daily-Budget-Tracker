@@ -196,7 +196,7 @@ public class DailyBudgetTracker extends Activity {
     	int toColor;
     	
     	//white
-    	if(ratio>1.0){
+    	if(ratio>0.5){
     		fColor = getResources().getColor(R.color.start);
     	}
     	//white <> green
