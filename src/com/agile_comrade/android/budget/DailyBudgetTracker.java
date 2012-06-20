@@ -203,9 +203,9 @@ public class DailyBudgetTracker extends Activity {
     	else if(ratio > 0.0){
     		fromColor = getResources().getColor(R.color.start);
     		toColor = getResources().getColor(R.color.good);
-    		red = (int)((double)(Color.red(fromColor)-Color.red(toColor))*ratio + Color.red(toColor));
-    		green = (int)((double)(Color.green(fromColor)-Color.green(toColor))*ratio + Color.green(toColor));
-    		blue = (int)((double)(Color.blue(fromColor)-Color.blue(toColor))*ratio + Color.blue(toColor));
+    		red = (int)((double)(Color.red(fromColor)-Color.red(toColor))*2.0*ratio + Color.red(toColor));
+    		green = (int)((double)(Color.green(fromColor)-Color.green(toColor))*2.0*ratio + Color.green(toColor));
+    		blue = (int)((double)(Color.blue(fromColor)-Color.blue(toColor))*2.0*ratio + Color.blue(toColor));
     		fColor = Color.rgb(red, green, blue);
     	}
     	//green<>yellow
