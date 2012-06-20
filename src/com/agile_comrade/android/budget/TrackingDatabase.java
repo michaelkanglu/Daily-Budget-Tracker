@@ -1,4 +1,4 @@
-package com.michael.android.budget;
+package com.agile_comrade.android.budget;
 
 import java.util.Calendar;
 

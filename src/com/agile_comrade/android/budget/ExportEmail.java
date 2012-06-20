@@ -1,4 +1,4 @@
-package com.michael.android.budget;
+package com.agile_comrade.android.budget;
 
 import java.util.Calendar;
 
@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import com.agile_comrade.android.budget.R;
 
 public class ExportEmail {
 	private Context mContext;

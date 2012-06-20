@@ -1,4 +1,4 @@
-package com.michael.android.budget;
+package com.agile_comrade.android.budget;
 
 import java.util.Calendar;
 
@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.agile_comrade.android.budget.R;
 
 public class Settings extends Activity {
 	

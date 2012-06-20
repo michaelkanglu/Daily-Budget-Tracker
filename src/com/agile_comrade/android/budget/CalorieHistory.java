@@ -1,4 +1,4 @@
-package com.michael.android.budget;
+package com.agile_comrade.android.budget;
 
 import java.util.Calendar;
 
@@ -24,6 +24,7 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import com.agile_comrade.android.budget.R;
 
 public class CalorieHistory extends Activity {
 	

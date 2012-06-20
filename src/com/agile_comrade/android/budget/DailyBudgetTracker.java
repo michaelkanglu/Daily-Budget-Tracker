@@ -1,4 +1,4 @@
-package com.michael.android.budget;
+package com.agile_comrade.android.budget;
 
 import java.util.Calendar;
 
@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import com.agile_comrade.android.budget.R;
 
 public class DailyBudgetTracker extends Activity {
 	private TrackingDatabase db_helper;
