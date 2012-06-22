@@ -72,7 +72,7 @@
 	    <item>Gradual Weight Gain (0.5 lb/week)</item>
 	    <item>Maintain Current Weight</item>
 	    <item>Gradual Weight Loss (0.5 lb/week)</item>
-	    <item>Moderate Weight Gain (1 lb/week)</item>    
+	    <item>Moderate Weight Loss (1 lb/week)</item>    
 	</string-array>
 	
 	<string-array name="p_activity_array">
